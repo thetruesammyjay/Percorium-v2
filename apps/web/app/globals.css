@@ -79,14 +79,8 @@ button { cursor: pointer; }
 .button-secondary { background: var(--white); color: var(--ink); }
 .button-secondary:hover { background: var(--sun); }
 
-.hero-art { position: relative; min-height: 430px; }
-.hero-card { position: absolute; inset: 44px 8% 34px 8%; display: grid; place-items: center; border: 1px solid var(--ink); border-radius: 46% 54% 49% 51% / 45% 40% 60% 55%; background: var(--blue); transform: rotate(4deg); }
-.hero-card img { width: min(74%, 300px); height: auto; }
-.sticker { position: absolute; display: grid; place-items: center; width: 76px; height: 76px; border: 1px solid var(--ink); border-radius: 20px; font-size: 30px; }
-.sticker img { width: 100%; height: 100%; object-fit: contain; }
-.sticker-one { top: 4px; right: 5%; background: var(--sun); transform: rotate(12deg); }
-.sticker-two { bottom: 2px; left: 1%; background: var(--violet); transform: rotate(-10deg); }
-.sticker-three { right: 0; bottom: 42px; background: var(--ember); transform: rotate(8deg); }
+.hero-art { position: relative; min-height: 430px; display: grid; place-items: center; }
+.hero-bot-image { width: min(100%, 577px); height: auto; }
 
 .section-heading { display: flex; align-items: flex-end; justify-content: space-between; gap: 24px; margin-bottom: 32px; }
 .section-heading h2 { max-width: 700px; margin: 0; font-size: clamp(46px, 6vw, 88px); font-weight: 800; line-height: .84; letter-spacing: -.065em; }
@@ -184,8 +178,7 @@ button { cursor: pointer; }
   .hero-inner { padding-top: 64px; padding-bottom: 70px; }
   .hero-title { font-size: clamp(68px, 19vw, 108px); }
   .hero-art { min-height: 280px; }
-  .hero-card { inset: 32px 9% 24px; }
-  .sticker { width: 58px; height: 58px; border-radius: 16px; }
+
   .band-inner { padding-top: 64px; padding-bottom: 64px; }
   .section-heading, .page-hero { align-items: flex-start; flex-direction: column; }
   .section-heading h2, .market-copy h2 { font-size: 58px; }

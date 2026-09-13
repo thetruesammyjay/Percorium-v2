@@ -5,6 +5,7 @@ export const BRAND_ASSET_ROOT = "/brand/apps/web/public/brand";
 export const brandAssets = {
   logo: {
     png: `${BRAND_ASSET_ROOT}/logo/Percorium.png`,
+    bot: `${BRAND_ASSET_ROOT}/Percorium_bot.png`,
     mark: `${BRAND_ASSET_ROOT}/logo/percorium-mark.svg`,
     mono: `${BRAND_ASSET_ROOT}/logo/percorium-mark-mono.svg`,
     wordmark: `${BRAND_ASSET_ROOT}/logo/percorium-wordmark.svg`,

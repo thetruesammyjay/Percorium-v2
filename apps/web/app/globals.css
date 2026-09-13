@@ -51,8 +51,7 @@ button { cursor: pointer; }
 .nav-pill:hover, .nav-pill.active { background: var(--sun); }
 .wallet-button, .button { display: inline-flex; min-height: 42px; align-items: center; justify-content: center; gap: 8px; border: 1px solid var(--ink); border-radius: var(--radius-pill); padding: 0 16px; font-size: 12px; font-weight: 800; letter-spacing: .03em; transition: transform .16s ease, background .16s ease; }
 .wallet-button { background: var(--ink); color: var(--white); }
-.header-settings { display: inline-grid; width: 34px; height: 34px; place-items: center; border: 1px solid var(--ink); border-radius: 50%; background: var(--white); font-size: 16px; }
-.header-settings:hover { background: var(--sun); }
+
 .wallet-button:hover, .button-primary:hover { transform: translateY(-2px); }
 .wallet-dot { width: 7px; height: 7px; border-radius: 50%; background: var(--ember); }
 .wallet-connected .wallet-dot { background: var(--success); }
@@ -214,6 +213,6 @@ button { cursor: pointer; }
   .header-center .nav-pill { padding: 13px 14px; border-radius: 14px; font-size: 14px; }
   .header-center .nav-pill:hover, .header-center .nav-pill.active { background: var(--sun); }
   .header-end { gap: 8px; }
-  .header-end .header-settings, .header-end .wallet-button, .header-end > .button { display: none; }
+  .header-end .wallet-button, .header-end > .button { display: none; }
   .menu-toggle { display: flex; }
 }

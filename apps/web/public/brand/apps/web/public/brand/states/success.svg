@@ -1,0 +1,5 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" role="img" aria-label="Success state">
+<title>Success state</title>
+<circle cx="32" cy="32" r="25" fill="#147a51"/>
+<path d="M19 33L28 42L46 22" fill="none" stroke="#ffffff" stroke-width="6" stroke-linecap="round" stroke-linejoin="round"/>
+</svg>

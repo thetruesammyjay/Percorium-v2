@@ -1,0 +1,9 @@
+import Image from "next/image";
+
+import { brandAssets } from "@/lib/brand";
+import { SectionLabel } from "@/components/ui/SectionLabel";
+import { StatusPill } from "@/components/ui/StatusPill";
+
+export default function SettingsPage() {
+  return <section className="band band-white"><div className="page-shell"><div className="page-hero"><div><SectionLabel>Preferences and identity</SectionLabel><h1>Make it<br />yours.</h1></div><div><StatusPill status="success">Saved locally</StatusPill><p>Solana stays first. Base stays hidden until you ask for it.</p></div></div><div className="card-grid"><section className="product-card product-card-gray"><Image src={brandAssets.logo.mono} alt="" width={64} height={64} /><h3>Rail visibility</h3><label className="field">Show Base<select defaultValue="Hidden"><option>Hidden</option><option>Visible</option></select></label><p>Base support remains optional while Solana is the default rail.</p></section><section className="product-card" style={{ background: "var(--lavender)" }}><h3>Identity</h3><label className="field">@handle<input placeholder="Choose a handle" /></label><label className="field">SNS link<input placeholder="Optional .sol or .sns" /></label><p>Names resolve to a pubkey. Wallets still sign.</p></section><section className="product-card" style={{ background: "var(--yellow)" }}><h3>Privacy</h3><label className="field">MagicBlock<select defaultValue="Off"><option>Off</option><option>On</option></select></label><p>Privacy mode is off by default.</p><button className="button button-secondary">Copy MCP URL</button></section></div></div></section>;
+}

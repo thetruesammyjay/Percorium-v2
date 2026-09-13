@@ -1,0 +1,22 @@
+name: API
+
+on:
+  push:
+    paths: ["apps/api/**", "docs/**"]
+  pull_request:
+    paths: ["apps/api/**", "docs/**"]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: apps/api
+    steps:
+      - uses: actions/checkout@v4
+      - uses: astral-sh/setup-uv@v6
+        with:
+          version: "latest"
+      - run: uv sync
+      - run: uv run ruff check .
+      - run: uv run pytest

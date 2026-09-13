@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" role="img" aria-label="VTI etf mark">
+<title>VTI etf mark</title>
+<rect x="3" y="3" width="58" height="58" rx="17" fill="#fb4903" stroke="#000000" stroke-width="3"/>
+<g transform="translate(11.750 39.000) scale(0.011719 -0.011719)"><path d="M500 0H1052L1536 1490H1084L919 912C869 738 823 565 778 391C731 565 683 738 631 912L458 1490H0Z" fill="#ffffff"/></g>
+<g transform="translate(29.750 39.000) scale(0.011719 -0.011719)"><path d="M40 1138H464V0H880V1138H1304V1490H40Z" fill="#ffffff"/></g>
+<g transform="translate(45.500 39.000) scale(0.011719 -0.011719)"><path d="M496 1490H80V0H496Z" fill="#ffffff"/></g>
+<circle cx="18" cy="51" r="3" fill="#ffffff"/><circle cx="27" cy="51" r="3" fill="#ffffff"/>
+</svg>

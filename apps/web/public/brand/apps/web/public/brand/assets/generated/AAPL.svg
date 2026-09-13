@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" role="img" aria-label="AAPL stock mark">
+<title>AAPL stock mark</title>
+<rect x="3" y="3" width="58" height="58" rx="17" fill="#4da2ff" stroke="#000000" stroke-width="3"/>
+<g transform="translate(5.861 39.000) scale(0.009277 -0.009277)"><path d="M0 0H455L528 245H1026L1097 0H1565L1060 1490H500ZM624 565 628 578C682 758 732 932 781 1113C829 932 878 758 930 578L934 565Z" fill="#ffffff"/></g>
+<g transform="translate(20.380 39.000) scale(0.009277 -0.009277)"><path d="M0 0H455L528 245H1026L1097 0H1565L1060 1490H500ZM624 565 628 578C682 758 732 932 781 1113C829 932 878 758 930 578L934 565Z" fill="#ffffff"/></g>
+<g transform="translate(34.899 39.000) scale(0.009277 -0.009277)"><path d="M80 0H496V450H713C1069 450 1292 651 1292 970C1292 1289 1069 1490 713 1490H80ZM496 792V1148H682C807 1148 886 1079 886 970C886 861 807 792 682 792Z" fill="#ffffff"/></g>
+<g transform="translate(47.210 39.000) scale(0.009277 -0.009277)"><path d="M80 0H1138V352H496V1490H80Z" fill="#ffffff"/></g>
+<path d="M10 51H26" stroke="#000000" stroke-width="3.5" stroke-linecap="round"/>
+</svg>

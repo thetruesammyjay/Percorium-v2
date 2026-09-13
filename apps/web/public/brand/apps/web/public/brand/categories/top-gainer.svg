@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" role="img" aria-label="Top gainer category">
+<title>Top gainer category</title>
+<rect x="4" y="4" width="56" height="56" rx="16" fill="#fb4903" stroke="#000000" stroke-width="3"/>
+<path d="M16 45L29 32L36 39L50 23" fill="none" stroke="#ffffff" stroke-width="7" stroke-linecap="round" stroke-linejoin="round"/>
+<path d="M42 22H51V31" fill="none" stroke="#ffffff" stroke-width="7" stroke-linecap="round" stroke-linejoin="round"/>
+<path d="M16 45L29 32L36 39L50 23M42 22H51V31" fill="none" stroke="#000000" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+</svg>

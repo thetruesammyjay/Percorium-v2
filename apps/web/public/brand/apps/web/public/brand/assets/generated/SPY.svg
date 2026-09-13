@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" role="img" aria-label="SPY etf mark">
+<title>SPY etf mark</title>
+<rect x="3" y="3" width="58" height="58" rx="17" fill="#e9ccff" stroke="#000000" stroke-width="3"/>
+<g transform="translate(7.238 39.000) scale(0.011719 -0.011719)"><path d="M704 -24C1108 -24 1339 154 1339 466C1339 704 1194 836 852 899L732 921C577 949 510 987 510 1058C510 1133 592 1186 709 1186C833 1186 916 1122 926 1018H1308C1298 1330 1073 1514 701 1514C339 1514 92 1321 92 1038C92 817 248 664 536 609L684 581C852 549 928 507 928 435C928 357 840 304 709 304C558 304 463 375 457 496H64C64 161 291 -24 704 -24Z" fill="#ffffff"/></g>
+<g transform="translate(23.680 39.000) scale(0.011719 -0.011719)"><path d="M80 0H496V450H713C1069 450 1292 651 1292 970C1292 1289 1069 1490 713 1490H80ZM496 792V1148H682C807 1148 886 1079 886 970C886 861 807 792 682 792Z" fill="#ffffff"/></g>
+<g transform="translate(39.230 39.000) scale(0.011719 -0.011719)"><path d="M555 0H957V508L1496 1490H1023L822 1072C800 1025 778 978 758 930C736 978 714 1025 690 1072L476 1490H0L555 508Z" fill="#ffffff"/></g>
+<circle cx="18" cy="51" r="3" fill="#ffffff"/><circle cx="27" cy="51" r="3" fill="#ffffff"/>
+</svg>

@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" role="img" aria-label="Sector category">
+<title>Sector category</title>
+<rect x="4" y="4" width="56" height="56" rx="16" fill="#e9ccff" stroke="#000000" stroke-width="3"/>
+<circle cx="32" cy="32" r="18" fill="#ffffff" stroke="#000000" stroke-width="3"/>
+<path d="M32 14V50M14 32H50M19.5 19.5L44.5 44.5M44.5 19.5L19.5 44.5" stroke="#000000" stroke-width="2.5" stroke-linecap="round"/>
+<circle cx="32" cy="32" r="5" fill="#5c4ade" stroke="#000000" stroke-width="2.5"/>
+</svg>

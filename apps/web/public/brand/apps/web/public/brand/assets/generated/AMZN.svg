@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" role="img" aria-label="AMZN stock mark">
+<title>AMZN stock mark</title>
+<rect x="3" y="3" width="58" height="58" rx="17" fill="#5c4ade" stroke="#000000" stroke-width="3"/>
+<g transform="translate(2.744 39.000) scale(0.009277 -0.009277)"><path d="M0 0H455L528 245H1026L1097 0H1565L1060 1490H500ZM624 565 628 578C682 758 732 932 781 1113C829 932 878 758 930 578L934 565Z" fill="#ffffff"/></g>
+<g transform="translate(17.263 39.000) scale(0.009277 -0.009277)"><path d="M80 0H488V576C488 672 480 863 475 1047C523 865 573 677 604 576L780 0H1116L1289 576C1320 681 1372 878 1419 1065C1415 876 1406 676 1406 576V0H1814V1490H1191L1059 1024C1030 923 986 750 948 597C910 750 865 923 836 1024L702 1490H80Z" fill="#ffffff"/></g>
+<g transform="translate(34.834 39.000) scale(0.009277 -0.009277)"><path d="M50 0H1286V352H575C628 411 680 469 730 528L1280 1178V1490H64V1138H767C712 1078 659 1019 607 959L50 312Z" fill="#ffffff"/></g>
+<g transform="translate(47.229 39.000) scale(0.009277 -0.009277)"><path d="M80 0H496V544C496 604 496 721 491 855C561 726 627 611 669 544L1008 0H1432V1490H1016V944C1016 873 1017 752 1021 631C963 738 902 849 867 905L504 1490H80Z" fill="#ffffff"/></g>
+<path d="M10 51H26" stroke="#000000" stroke-width="3.5" stroke-linecap="round"/>
+</svg>

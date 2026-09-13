@@ -1,0 +1,35 @@
+:root {
+  /* Percorium decorative brand palette */
+  --color-carbon: #000000;
+  --color-paper-white: #ffffff;
+  --color-sky-wash: #dceeff;
+  --color-concrete-gray: #cccccc;
+  --color-soft-mist: #e9e9e9;
+  --color-electric-blue: #4da2ff;
+  --color-mint-pop: #55db9c;
+  --color-lavender: #e9ccff;
+  --color-ember: #fb4903;
+  --color-sunburst: #ffd731;
+  --color-voltage-violet: #5c4ade;
+
+  /* Semantic product states: intentionally separate from decorative colors */
+  --state-success: #147a51;
+  --state-success-soft: #ddf6ea;
+  --state-success-border: #68b894;
+  --state-success-text: #0e5c3d;
+
+  --state-warning: #9a6500;
+  --state-warning-soft: #fff1c2;
+  --state-warning-border: #d4a62a;
+  --state-warning-text: #704900;
+
+  --state-blocked: #b42318;
+  --state-blocked-soft: #ffe4e1;
+  --state-blocked-border: #dc766d;
+  --state-blocked-text: #8e1a11;
+
+  --state-pending: #4f46b5;
+  --state-pending-soft: #e7e7ff;
+  --state-pending-border: #8178d4;
+  --state-pending-text: #39328e;
+}

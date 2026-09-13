@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" role="img" aria-label="Percorium monochrome mark">
+<title>Percorium monochrome mark</title>
+<g fill="currentColor" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round">
+  <path d="M18 54V12C18 9.8 19.8 8 22 8H35.5C47.5 8 54 15.2 54 25.8C54 36.7 46.3 43 35 43H29V54C29 56.2 27.2 58 25 58H22C19.8 58 18 56.2 18 54ZM29 16V35H35C41.1 35 45 31.2 45 25.2C45 19.2 41.4 16 35 16H29Z" fill-rule="evenodd" stroke="none"/>
+  <ellipse cx="33" cy="31" rx="29" ry="10" transform="rotate(-15 33 31)" fill="none" stroke-width="4"/>
+  <circle cx="52" cy="17" r="7" stroke="none"/>
+</g>
+</svg>

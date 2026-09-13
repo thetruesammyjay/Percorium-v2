@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" role="img" aria-label="VOO etf mark">
+<title>VOO etf mark</title>
+<rect x="3" y="3" width="58" height="58" rx="17" fill="#55db9c" stroke="#000000" stroke-width="3"/>
+<g transform="translate(5.094 39.000) scale(0.011719 -0.011719)"><path d="M500 0H1052L1536 1490H1084L919 912C869 738 823 565 778 391C731 565 683 738 631 912L458 1490H0Z" fill="#ffffff"/></g>
+<g transform="translate(23.094 39.000) scale(0.011719 -0.011719)"><path d="M764 -24C1169 -24 1488 247 1488 744C1488 1242 1169 1514 764 1514C357 1514 40 1242 40 744C40 250 357 -24 764 -24ZM764 336C569 336 460 487 460 744C460 1002 569 1154 764 1154C960 1154 1068 1002 1068 744C1068 487 960 336 764 336Z" fill="#ffffff"/></g>
+<g transform="translate(41.000 39.000) scale(0.011719 -0.011719)"><path d="M764 -24C1169 -24 1488 247 1488 744C1488 1242 1169 1514 764 1514C357 1514 40 1242 40 744C40 250 357 -24 764 -24ZM764 336C569 336 460 487 460 744C460 1002 569 1154 764 1154C960 1154 1068 1002 1068 744C1068 487 960 336 764 336Z" fill="#ffffff"/></g>
+<circle cx="18" cy="51" r="3" fill="#ffffff"/><circle cx="27" cy="51" r="3" fill="#ffffff"/>
+</svg>

@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" role="img" aria-label="ARKK etf mark">
+<title>ARKK etf mark</title>
+<rect x="3" y="3" width="58" height="58" rx="17" fill="#ffd731" stroke="#000000" stroke-width="3"/>
+<g transform="translate(4.567 39.000) scale(0.009277 -0.009277)"><path d="M0 0H455L528 245H1026L1097 0H1565L1060 1490H500ZM624 565 628 578C682 758 732 932 781 1113C829 932 878 758 930 578L934 565Z" fill="#ffffff"/></g>
+<g transform="translate(19.086 39.000) scale(0.009277 -0.009277)"><path d="M80 0H496V466H682L905 0H1338L1065 556C1210 642 1292 785 1292 970C1292 1289 1069 1490 713 1490H80ZM496 788V1152H682C807 1152 886 1079 886 970C886 861 807 788 682 788Z" fill="#ffffff"/></g>
+<g transform="translate(31.731 39.000) scale(0.009277 -0.009277)"><path d="M80 0H496V346L677 568L1017 0H1493L945 850L1465 1490H984L688 1107C624 1024 560 942 496 859V1490H80Z" fill="#ffffff"/></g>
+<g transform="translate(45.582 39.000) scale(0.009277 -0.009277)"><path d="M80 0H496V346L677 568L1017 0H1493L945 850L1465 1490H984L688 1107C624 1024 560 942 496 859V1490H80Z" fill="#ffffff"/></g>
+<circle cx="18" cy="51" r="3" fill="#ffffff"/><circle cx="27" cy="51" r="3" fill="#ffffff"/>
+</svg>

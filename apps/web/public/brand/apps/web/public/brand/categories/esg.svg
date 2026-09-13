@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" role="img" aria-label="ESG category">
+<title>ESG category</title>
+<rect x="4" y="4" width="56" height="56" rx="16" fill="#55db9c" stroke="#000000" stroke-width="3"/>
+<path d="M15 39C17 24 30 14 49 15C49 34 39 47 24 49C18 50 14 45 15 39Z" fill="#ffffff" stroke="#000000" stroke-width="3.5" stroke-linejoin="round"/>
+<path d="M20 44C29 36 36 28 46 20" fill="none" stroke="#000000" stroke-width="3.5" stroke-linecap="round"/>
+<path d="M29 36L24 29M35 31L38 24" fill="none" stroke="#000000" stroke-width="2.5" stroke-linecap="round"/>
+</svg>

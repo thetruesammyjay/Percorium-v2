@@ -13,6 +13,7 @@ from app.api import (
     quotes,
     social,
     trades,
+    watchlist,
 )
 
 api_router = APIRouter()
@@ -28,3 +29,4 @@ api_router.include_router(portfolio.router, prefix="/portfolio", tags=["portfoli
 api_router.include_router(social.router, prefix="/social", tags=["social"])
 api_router.include_router(news.router, prefix="/news", tags=["news"])
 api_router.include_router(mcp.router, prefix="/mcp", tags=["mcp"])
+api_router.include_router(watchlist.router, prefix="/watchlist", tags=["watchlist"])

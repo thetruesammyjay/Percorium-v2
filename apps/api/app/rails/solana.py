@@ -11,6 +11,11 @@ class SolanaRail:
     async def health(self) -> RailHealth:
         return RailHealth(
             name=self.name,
-            configured=bool(self.settings.alchemy_solana_rpc_url and self.settings.sunrise_api_url),
+            configured=bool(
+                self.settings.alchemy_solana_rpc_url
+                and self.settings.sunrise_api_url
+                and self.settings.sunrise_api_key
+                and self.settings.platform_fee_wallet
+            ),
             enabled=True,
         )

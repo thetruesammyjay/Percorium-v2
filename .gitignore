@@ -29,3 +29,4 @@ data/processed/*
 *.log
 .DS_Store
 Thumbs.db
+*.db

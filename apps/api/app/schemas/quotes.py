@@ -1,26 +1,33 @@
-from decimal import Decimal
+from datetime import datetime
 from typing import Literal
 
-from pydantic import BaseModel, Field
+from pydantic import AliasChoices, Field
 
-from app.schemas.common import RailName
+from app.schemas.common import APIModel, AtomicAmount, RailName
 
 
-class QuoteRequest(BaseModel):
-    rail: RailName = "solana"
-    input_mint: str
-    output_mint: str
-    amount: Decimal = Field(gt=0)
-    input_decimals: int = Field(default=6, ge=0, le=18)
+class QuoteRequest(APIModel):
+    rail: RailName = RailName.SOLANA
+    sell_mint: str = Field(validation_alias=AliasChoices("sell_mint", "input_mint"), min_length=1, max_length=64)
+    buy_mint: str = Field(validation_alias=AliasChoices("buy_mint", "output_mint"), min_length=1, max_length=64)
+    sell_amount: AtomicAmount = Field(validation_alias=AliasChoices("sell_amount", "amount"))
+    slippage_bps: int = Field(default=100, ge=1, le=5_000)
     mode: Literal["exact_in", "exact_out"] = "exact_in"
 
 
-class QuoteResponse(BaseModel):
+class QuoteResponse(APIModel):
     status: Literal["ready", "not_configured"]
     rail: RailName
-    input_mint: str
-    output_mint: str
-    amount: Decimal
+    sell_mint: str
+    buy_mint: str
+    sell_amount: AtomicAmount
+    expected_buy_amount: AtomicAmount | None = None
+    price_impact_bps: int | None = None
     fee_bps: int
-    fee_amount: Decimal | None = None
+    platform_fee: AtomicAmount
+    network_fee: str = "estimated"
+    total_debit: AtomicAmount
+    expires_at: datetime
+    transaction: str | None = None
+    signing_required: bool = True
     message: str | None = None

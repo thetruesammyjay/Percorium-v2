@@ -168,7 +168,7 @@ export default function AssetsPage() {
               <StatusPill status={assetsConfigured ? "success" : "pending"}>
                 {assetsConfigured ? "Approved list" : "Source waiting"}
               </StatusPill>
-              <p>Stocks are Sunrise-approved. Pre-IPO is an optional PreStocks source. Jupiter token search is not used for discovery.</p>
+              <p>Stocks are official. Pre-IPO is an optional PreStocks source. Jupiter token search is not used for discovery.</p>
             </div>
           </div>
           <div className="discovery-tabs" role="tablist" aria-label="Discovery source">
@@ -190,7 +190,7 @@ export default function AssetsPage() {
               <input value={query} onChange={(event) => setQuery(event.target.value)} placeholder={view === "new" ? "New discovery is coming soon" : "Ticker, company, or category"} disabled={view === "new"} />
             </label>
             {assetsLoading ? (
-              <div className="empty-state"><p>Loading the approved {view === "pre-ipo" ? "PreStocks" : "Sunrise"} list…</p></div>
+              <div className="empty-state"><p>Loading the approved {view === "pre-ipo" ? "Pre-IPO" : "stock"} list…</p></div>
             ) : assetsError ? (
               <div className="empty-state"><StatusPill status="warning">Registry unavailable</StatusPill><p>{assetsError}</p></div>
             ) : assets.length ? (

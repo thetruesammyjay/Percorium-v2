@@ -284,8 +284,8 @@ export default function TradePage() {
             <div className="fee-line"><span>Route</span><strong>Allowlist → Jupiter → Solana</strong></div>
             <div className="fee-line"><span>Platform fee</span><strong>{PLATFORM_FEE_BPS} bps</strong></div>
             {error && <p className="form-error" role="alert">{error}</p>}
-            {assetsLoading && <p className="field-note">Loading approved Sunrise assets…</p>}
-            {!assetsLoading && !assets.length && <p className="field-note">{assetsMessage ?? "Sunrise assets are unavailable until the provider is configured."}</p>}
+            {assetsLoading && <p className="field-note">Loading approved stock assets…</p>}
+            {!assetsLoading && !assets.length && <p className="field-note">{assetsMessage ?? "Approved stock assets are unavailable until the asset registry is configured."}</p>}
             <button className="button button-primary" type="submit" disabled={loading || !buyAsset}>
               {primaryLabel}
             </button>

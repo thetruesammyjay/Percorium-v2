@@ -4,7 +4,7 @@ from pydantic import ValidationError
 from app.schemas.orders import OrderCreate
 
 SOL_MINT = "So11111111111111111111111111111111111111112"
-USDC_MINT = "EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v"
+USDC_MINT = "EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGkZwyTDt1v"
 WALLET = "11111111111111111111111111111111"
 
 

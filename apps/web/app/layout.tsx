@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 
 import { AppShell } from "@/components/layout/AppShell";
+import { Providers } from "@/components/providers/Providers";
 import "./globals.css";
 
 export const metadata: Metadata = {
@@ -12,7 +13,7 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
   return (
     <html lang="en">
       <body>
-        <AppShell>{children}</AppShell>
+        <Providers><AppShell>{children}</AppShell></Providers>
       </body>
     </html>
   );

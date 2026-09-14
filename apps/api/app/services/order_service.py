@@ -7,12 +7,13 @@ import httpx
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.core.config import Settings
-from app.core.exceptions import AppError, IdempotencyConflictError, NotFoundError, UnsupportedAssetError
+from app.core.exceptions import AppError, IdempotencyConflictError, NotFoundError
 from app.core.time import as_utc
 from app.core.validators import require_solana_address, require_solana_signature
 from app.db.models import OrderIntentRecord
-from app.db.repositories import AssetRepository, OrderIntentRepository
+from app.db.repositories import OrderIntentRepository
 from app.integrations.jupiter import JupiterClient
+from app.lib.allowlist import AssetAllowlist
 from app.schemas.common import OrderStatus, RailName
 from app.schemas.orders import OrderCreate, OrderListResponse, OrderResponse
 from app.services.fee_service import calculate_fee
@@ -22,12 +23,12 @@ class OrderService:
     def __init__(self, session: AsyncSession, settings: Settings, client: httpx.AsyncClient) -> None:
         self.session = session
         self.settings = settings
-        self.assets = AssetRepository(session)
         self.orders = OrderIntentRepository(session)
         self.jupiter = JupiterClient(settings, client)
+        self.allowlist = AssetAllowlist(settings, client)
 
     async def create_order(self, request: OrderCreate, idempotency_key: str) -> OrderResponse:
-        self._validate_request(request)
+        await self._validate_request(request)
         fingerprint = self._fingerprint(request)
         existing = await self.orders.get_by_idempotency(request.wallet, idempotency_key)
         if existing is not None:
@@ -41,7 +42,6 @@ class OrderService:
         if not (self.jupiter.configured and self.settings.platform_fee_wallet):
             return self._not_configured(request, platform_fee, amount + platform_fee, expires_at)
 
-        await self._validate_official_assets(request)
         require_solana_address(self.settings.platform_fee_wallet or "", field="platform_fee_wallet")
         provider_payload = {
             "user": request.wallet,
@@ -69,6 +69,7 @@ class OrderService:
             idempotency_key=idempotency_key,
             request_hash=fingerprint,
             rail=request.rail.value,
+            tab=request.tab,
             order_type=request.order_type,
             input_mint=request.input_mint,
             output_mint=request.output_mint,
@@ -93,7 +94,7 @@ class OrderService:
         now = datetime.now(timezone.utc)
         changed = False
         for record in records:
-            if record.status == OrderStatus.AWAITING_SIGNATURE.value and record.expires_at <= now:
+            if record.status == OrderStatus.AWAITING_SIGNATURE.value and as_utc(record.expires_at) <= now:
                 record.status = OrderStatus.EXPIRED.value
                 changed = True
         if changed:
@@ -118,15 +119,7 @@ class OrderService:
         await self.session.commit()
         return self._to_response(record)
 
-    async def _validate_official_assets(self, request: OrderCreate) -> None:
-        for mint in (request.input_mint, request.output_mint):
-            if mint in {self.settings.solana_usdc_mint, self.settings.solana_wrapped_sol_mint}:
-                continue
-            asset = await self.assets.get_by_mint(mint)
-            if asset is None or not asset.verified or not asset.tradable:
-                raise UnsupportedAssetError(mint)
-
-    def _validate_request(self, request: OrderCreate) -> None:
+    async def _validate_request(self, request: OrderCreate) -> None:
         if request.rail == RailName.BASE:
             if not self.settings.base_enabled:
                 raise AppError(
@@ -141,6 +134,7 @@ class OrderService:
         require_solana_address(request.wallet, field="wallet")
         require_solana_address(request.input_mint, field="input_mint")
         require_solana_address(request.output_mint, field="output_mint")
+        await self.allowlist.assert_pair_allowed(request.input_mint, request.output_mint, request.tab)
 
     @staticmethod
     def _parse_expiry(value: str | None, fallback: datetime) -> datetime:
@@ -163,6 +157,7 @@ class OrderService:
         return OrderResponse(
             status="not_configured",
             rail=request.rail,
+            tab=request.tab,
             wallet=request.wallet,
             order_type=request.order_type,
             input_mint=request.input_mint,
@@ -185,6 +180,7 @@ class OrderService:
             id=record.id,
             status=status,
             rail=RailName(record.rail),
+            tab=record.tab,
             wallet=record.wallet,
             order_type=cast(Literal["limit", "dca"], record.order_type),
             input_mint=record.input_mint,

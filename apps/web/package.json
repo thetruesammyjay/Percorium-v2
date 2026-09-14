@@ -10,6 +10,10 @@
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
+    "@privy-io/react-auth": "^3.42.0",
+    "@solana-program/memo": "^0.13.1",
+    "@solana/kit": "^8.3.0",
+    "@solana/web3.js": "^1.99.0",
     "next": "^15.5.0",
     "react": "^19.1.0",
     "react-dom": "^19.1.0"

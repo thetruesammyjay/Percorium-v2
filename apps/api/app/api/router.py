@@ -6,6 +6,7 @@ from app.api import (
     gifts,
     health,
     identity,
+    market,
     mcp,
     news,
     orders,
@@ -30,3 +31,4 @@ api_router.include_router(social.router, prefix="/social", tags=["social"])
 api_router.include_router(news.router, prefix="/news", tags=["news"])
 api_router.include_router(mcp.router, prefix="/mcp", tags=["mcp"])
 api_router.include_router(watchlist.router, prefix="/watchlist", tags=["watchlist"])
+api_router.include_router(market.router, prefix="/market", tags=["market"])

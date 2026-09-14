@@ -10,7 +10,7 @@ Percorium does not custody user funds or private keys.
 
 ## Repository status
 
-This repository is being restructured into a Python/FastAPI backend and a Next.js frontend.S
+This repository is being restructured into a Python/FastAPI backend and a Next.js frontend.
 
 The new root-level README documents the target monorepo architecture. The Solana rail is the primary implementation target. Base support will be added behind an optional rail adapter and hidden by default in the product settings.
 
@@ -36,7 +36,7 @@ The Solana trading rail supports:
 - Stock-to-stock swaps.
 - Limit orders through Jupiter Trigger V2.
 - DCA orders through Jupiter Trigger V2.
-- Sunrise quote and execution flows.
+- Jupiter prepares Solana quotes and swap transactions after the API allowlist check.
 - A visible fee breakdown before signing.
 - Wallet-signed transaction execution and confirmation tracking.
 
@@ -230,7 +230,7 @@ For eligible copy-once trades, the copy master receives 10% of the Percorium fee
 | Purpose | Primary source | Fallback or note |
 | --- | --- | --- |
 | Official Solana stock/ETF list | Sunrise | Reject unknown mints |
-| Solana quotes and execution | Sunrise | Route-specific validation |
+| Solana quotes and swaps | Jupiter | Called only after allowlist validation |
 | Limit and DCA orders | Jupiter Trigger V2 | Persist order state |
 | Solana RPC | Alchemy | Configure separate public/private endpoints as needed |
 | Charts | DexScreener | GeckoTerminal fallback |
@@ -378,24 +378,32 @@ Secrets belong only in `apps/api/.env`. Public browser configuration belongs in 
 
 ### API configuration
 
-The exact variable names will be finalized in `apps/api/app/core/config.py`, but the initial configuration should cover:
+The API reads provider configuration from `apps/api/app/core/config.py`. Keep all secrets in `apps/api/.env`:
 
 ```text
 DATABASE_URL=
 REDIS_URL=
 ALCHEMY_SOLANA_RPC_URL=
-ALCHEMY_SOLANA_WS_URL=
+SOLANA_USDC_MINT=EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGkZwyTDt1v
+SOLANA_WRAPPED_SOL_MINT=So11111111111111111111111111111111111111112
+SOLANA_USDT_MINT=Es9vMFrzaCERmJfrF4H2FYD4KCoNkY11McCe8BenwNYB
 SUNRISE_API_URL=
 SUNRISE_API_KEY=
-JUPITER_API_URL=
+SUNRISE_LIST_TOKENS_PATH=/list-tokens
+PREIPO_API_URL=https://prestocks.com/api/prestocks
+ALLOWLIST_CACHE_SECONDS=900
+JUPITER_API_KEY=
+JUPITER_API_URL=https://api.jup.ag
+JUPITER_QUOTE_PATH=/swap/v1/quote
+JUPITER_SWAP_PATH=/swap/v1/swap
 FINNHUB_API_KEY=
 PRIVY_APP_ID=
 PRIVY_APP_SECRET=
-PERCORIUM_FEE_WALLET=
-PERCORIUM_COPY_FEE_BPS=50
+PLATFORM_FEE_WALLET=
+PLATFORM_FEE_BPS=50
 BASE_ENABLED=false
-BASE_RPC_URL=
-ZERO_EX_API_KEY=
+MAGICBLOCK_ENABLED=false
+AUTH_REQUIRED=false
 ```
 
 ### Web configuration
@@ -416,7 +424,7 @@ Never expose API keys, wallet secrets, Privy server credentials, or fee-wallet a
 Backend tests should cover:
 
 - Official mint validation.
-- Sunrise quote normalization.
+- Sunrise allowlist normalization.
 - Jupiter Trigger V2 order payloads.
 - Fee calculation and copy-master split.
 - Quote expiry and replay protection.
@@ -495,7 +503,7 @@ The API should expose health and readiness endpoints. Background workers should 
 
 ### Phase 2: Signed trading
 
-- Sunrise execution.
+- Jupiter Swap execution after allowlist validation.
 - Stock sells and stock-to-stock swaps.
 - 50 bps fee accounting.
 - Transaction status and reconciliation.

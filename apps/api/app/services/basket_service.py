@@ -6,24 +6,23 @@ from uuid import uuid4
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from app.core.exceptions import AppError, NotFoundError, UnsupportedAssetError
+from app.core.config import Settings
+from app.core.exceptions import AppError, NotFoundError
 from app.core.validators import require_solana_address
 from app.db.models import BasketRecord
-from app.db.repositories import AssetRepository
+from app.lib.allowlist import AssetAllowlist
 from app.schemas.baskets import BasketCreate, BasketItem, BasketListResponse, BasketResponse
 
 
 class BasketService:
-    def __init__(self, session: AsyncSession) -> None:
+    def __init__(self, session: AsyncSession, settings: Settings, client) -> None:
         self.session = session
-        self.assets = AssetRepository(session)
+        self.allowlist = AssetAllowlist(settings, client)
 
     async def create(self, request: BasketCreate, owner_wallet: str | None) -> BasketResponse:
         for item in request.items:
             require_solana_address(item.mint, field="mint")
-            asset = await self.assets.get_by_mint(item.mint)
-            if asset is None or not asset.verified or not asset.tradable:
-                raise UnsupportedAssetError(item.mint)
+            await self.allowlist.assert_asset_allowed(item.mint, request.tab)
         slug = request.slug or self._slug(request.name)
         existing = await self.session.scalar(select(BasketRecord).where(BasketRecord.slug == slug))
         if existing is not None:

@@ -1,4 +1,4 @@
-"""Sunrise asset allowlist and quote/execute adapter boundary."""
+"""Sunrise official asset-list adapter boundary."""
 
 
 class SunriseClient:

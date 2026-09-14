@@ -2,8 +2,8 @@ import httpx
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.core.config import Settings
-from app.db.repositories import AssetRepository
 from app.integrations.alchemy import AlchemySolanaClient
+from app.lib.allowlist import AssetAllowlist
 from app.schemas.portfolio import PortfolioResponse, PortfolioToken
 
 
@@ -11,7 +11,7 @@ class PortfolioService:
     def __init__(self, session: AsyncSession, settings: Settings, client: httpx.AsyncClient) -> None:
         self.session = session
         self.settings = settings
-        self.assets = AssetRepository(session)
+        self.allowlist = AssetAllowlist(settings, client)
         self.alchemy = AlchemySolanaClient(settings.alchemy_solana_rpc_url, client)
 
     async def get(self, wallet: str) -> PortfolioResponse:
@@ -28,11 +28,14 @@ class PortfolioService:
             wallet,
             token_program_id=self.settings.solana_token_program_id,
         )
-        allowed_assets = {asset.mint: (asset.symbol, asset.name) for asset in await self.assets.list_assets(limit=100)}
+        official_assets = await self.allowlist.load_stocks()
+        official_assets.extend(await self.allowlist.load_preipo())
+        allowed_assets = {asset.mint: (asset.symbol, asset.name) for asset in official_assets}
         allowed_assets.update(
             {
                 self.settings.solana_usdc_mint: ("USDC", "USD Coin"),
                 self.settings.solana_wrapped_sol_mint: ("SOL", "Wrapped SOL"),
+                self.settings.solana_usdt_mint: ("USDT", "Tether USD"),
             }
         )
 

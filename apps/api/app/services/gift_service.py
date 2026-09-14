@@ -4,26 +4,25 @@ from secrets import token_urlsafe
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from app.core.exceptions import IdempotencyConflictError, NotFoundError, UnsupportedAssetError
+from app.core.config import Settings
+from app.core.exceptions import IdempotencyConflictError, NotFoundError
 from app.core.time import as_utc
 from app.core.validators import require_recipient_reference, require_solana_address
 from app.db.models import GiftClaimRecord
-from app.db.repositories import AssetRepository
+from app.lib.allowlist import AssetAllowlist
 from app.schemas.gifts import GiftCreate, GiftResponse
 
 
 class GiftService:
-    def __init__(self, session: AsyncSession) -> None:
+    def __init__(self, session: AsyncSession, settings: Settings, client) -> None:
         self.session = session
-        self.assets = AssetRepository(session)
+        self.allowlist = AssetAllowlist(settings, client)
 
     async def create(self, request: GiftCreate, idempotency_key: str) -> GiftResponse:
         require_solana_address(request.sender_wallet, field="sender_wallet")
         require_solana_address(request.asset_mint, field="asset_mint")
         recipient = require_recipient_reference(request.recipient_reference)
-        asset = await self.assets.get_by_mint(request.asset_mint)
-        if asset is None or not asset.verified or not asset.tradable:
-            raise UnsupportedAssetError(request.asset_mint)
+        await self.allowlist.assert_asset_allowed(request.asset_mint, request.tab)
         existing = await self.session.scalar(
             select(GiftClaimRecord).where(
                 GiftClaimRecord.sender_wallet == request.sender_wallet,

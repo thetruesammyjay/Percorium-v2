@@ -9,6 +9,7 @@ from app.schemas.common import APIModel, AtomicAmount, OrderStatus, RailName
 
 class OrderCreate(APIModel):
     rail: RailName = RailName.SOLANA
+    tab: Literal["stocks", "pre-ipo"] = "stocks"
     wallet: str = Field(min_length=32, max_length=64)
     input_mint: str = Field(min_length=1, max_length=64)
     output_mint: str = Field(min_length=1, max_length=64)
@@ -46,6 +47,7 @@ class OrderResponse(APIModel):
     id: str | None = None
     status: OrderStatus | Literal["not_configured"]
     rail: RailName
+    tab: Literal["stocks", "pre-ipo"] = "stocks"
     wallet: str
     order_type: Literal["limit", "dca"]
     input_mint: str

@@ -30,3 +30,4 @@ export const brandAssets = {
 } as const;
 
 export type BrandCategory = keyof typeof brandAssets.categories;
+export const generatedTickerMarks = new Set(["AAPL", "AMZN", "ARKK", "MSFT", "NVDA", "QQQ", "SPY", "TSLA", "VOO", "VTI"]);

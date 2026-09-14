@@ -6,12 +6,14 @@ import httpx
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.core.config import Settings
-from app.core.exceptions import AppError, IdempotencyConflictError, NotFoundError, UnsupportedAssetError
+from app.core.exceptions import AppError, IdempotencyConflictError, NotFoundError
 from app.core.time import as_utc
 from app.core.validators import require_solana_address, require_solana_signature
 from app.db.models import TradeIntentRecord
-from app.db.repositories import AssetRepository, TradeIntentRepository
+from app.db.repositories import TradeIntentRepository
 from app.integrations.alchemy import AlchemySolanaClient
+from app.integrations.jupiter import JupiterClient
+from app.lib.allowlist import AssetAllowlist
 from app.schemas.common import RailName, TradeStatus
 from app.schemas.quotes import QuoteRequest
 from app.schemas.trades import TradeCreate, TradeListResponse, TradeResponse
@@ -23,13 +25,14 @@ class TradeService:
     def __init__(self, session: AsyncSession, settings: Settings, client: httpx.AsyncClient) -> None:
         self.session = session
         self.settings = settings
-        self.assets = AssetRepository(session)
         self.trades = TradeIntentRepository(session)
         self.quotes = QuoteService(session, settings, client)
+        self.jupiter = JupiterClient(settings, client)
+        self.allowlist = AssetAllowlist(settings, client)
         self.alchemy = AlchemySolanaClient(settings.alchemy_solana_rpc_url, client)
 
     async def create_trade(self, request: TradeCreate, idempotency_key: str) -> TradeResponse:
-        self._validate_request(request)
+        await self._validate_request(request)
         fingerprint = self._fingerprint(request)
         existing = await self.trades.get_by_idempotency(request.wallet, idempotency_key)
         if existing is not None:
@@ -43,16 +46,10 @@ class TradeService:
         if not self.quotes.execution_configured:
             return self._not_configured(request, fees, amount + fees.platform_fee, expires_at)
 
-        for mint in (request.sell_mint, request.buy_mint):
-            if mint in {self.settings.solana_usdc_mint, self.settings.solana_wrapped_sol_mint}:
-                continue
-            asset = await self.assets.get_by_mint(mint)
-            if asset is None or not asset.verified or not asset.tradable:
-                raise UnsupportedAssetError(mint)
-
         quote = await self.quotes.create_quote(
             QuoteRequest(
                 rail=request.rail,
+                tab=request.tab,
                 sell_mint=request.sell_mint,
                 buy_mint=request.buy_mint,
                 sell_amount=request.sell_amount,
@@ -60,14 +57,21 @@ class TradeService:
                 mode="exact_in",
             )
         )
-        if quote.status != "ready":
+        if quote.status != "ready" or not quote.provider_quote:
             return self._not_configured(request, fees, amount + fees.platform_fee, expires_at)
 
+        swap = await self.jupiter.swap(
+            wallet=request.wallet,
+            quote_response=quote.provider_quote,
+            platform_fee_bps=self.settings.platform_fee_bps,
+            platform_fee_account=self.settings.platform_fee_wallet,
+        )
         record = await self.trades.create(
             wallet=request.wallet,
             idempotency_key=idempotency_key,
             request_hash=fingerprint,
             rail=request.rail.value,
+            tab=request.tab,
             sell_mint=request.sell_mint,
             buy_mint=request.buy_mint,
             sell_amount=request.sell_amount,
@@ -81,7 +85,7 @@ class TradeService:
             total_debit=quote.total_debit,
             is_private=request.is_private,
             status=TradeStatus.AWAITING_SIGNATURE.value,
-            transaction_payload=quote.transaction,
+            transaction_payload=swap.transaction,
             expires_at=quote.expires_at,
             external_id=None,
         )
@@ -133,7 +137,7 @@ class TradeService:
         await self.session.commit()
         return self._to_response(record)
 
-    def _validate_request(self, request: TradeCreate) -> None:
+    async def _validate_request(self, request: TradeCreate) -> None:
         if request.rail == RailName.BASE:
             if not self.settings.base_enabled:
                 raise AppError(
@@ -148,12 +152,7 @@ class TradeService:
         require_solana_address(request.sell_mint, field="sell_mint")
         require_solana_address(request.buy_mint, field="buy_mint")
         require_solana_address(request.wallet, field="wallet")
-        if request.sell_mint == request.buy_mint:
-            raise AppError("sell_mint and buy_mint must be different.", code="same_asset", status_code=422)
-
-    @staticmethod
-    def _validate_signature(signature: str) -> None:
-        require_solana_signature(signature)
+        await self.allowlist.assert_pair_allowed(request.sell_mint, request.buy_mint, request.tab)
 
     @staticmethod
     def _fingerprint(request: TradeCreate) -> str:
@@ -166,6 +165,7 @@ class TradeService:
         return TradeResponse(
             status="not_configured",
             rail=request.rail,
+            tab=request.tab,
             wallet=request.wallet,
             sell_mint=request.sell_mint,
             buy_mint=request.buy_mint,
@@ -176,7 +176,7 @@ class TradeService:
             percorium_fee=str(fees.percorium_fee),
             total_debit=str(total),
             expires_at=expires_at,
-            message="Configure Sunrise credentials and the Percorium fee wallet before preparing a transaction.",
+            message="Configure Jupiter credentials and the Percorium fee wallet before preparing a transaction.",
         )
 
     @staticmethod
@@ -186,6 +186,7 @@ class TradeService:
             id=record.id,
             status=status,
             rail=RailName(record.rail),
+            tab=record.tab,
             wallet=record.wallet,
             sell_mint=record.sell_mint,
             buy_mint=record.buy_mint,

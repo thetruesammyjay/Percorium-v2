@@ -1,4 +1,5 @@
 from datetime import datetime
+from typing import Literal
 
 from pydantic import Field
 
@@ -6,6 +7,7 @@ from app.schemas.common import APIModel, AtomicAmount
 
 
 class GiftCreate(APIModel):
+    tab: Literal["stocks", "pre-ipo"] = "stocks"
     sender_wallet: str = Field(min_length=32, max_length=64)
     asset_mint: str = Field(min_length=1, max_length=64)
     amount: AtomicAmount

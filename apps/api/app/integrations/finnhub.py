@@ -19,6 +19,20 @@ class FinnhubClient:
     def configured(self) -> bool:
         return bool(self.settings.finnhub_api_key)
 
+    async def quote(self, symbol: str) -> dict[str, Any]:
+        """Return the latest quote payload for a US ticker from Finnhub."""
+        if not self.configured:
+            raise IntegrationNotConfiguredError(self.name)
+        payload = await get_json(
+            self.client,
+            integration=self.name,
+            url=f"{self.settings.finnhub_api_url.rstrip('/')}/quote",
+            params={"symbol": symbol.upper(), "token": self.settings.finnhub_api_key},
+        )
+        if not isinstance(payload, dict):
+            raise ProviderRequestError(self.name, "Finnhub returned an invalid quote payload.")
+        return payload
+
     async def company_news(self, symbol: str, days: int = 7) -> list[dict[str, Any]]:
         if not self.configured:
             raise IntegrationNotConfiguredError(self.name)

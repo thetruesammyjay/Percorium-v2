@@ -3,7 +3,7 @@ from fastapi.testclient import TestClient
 from app.main import app
 
 SOL_MINT = "So11111111111111111111111111111111111111112"
-USDC_MINT = "EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v"
+USDC_MINT = "EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGkZwyTDt1v"
 
 
 def test_quote_returns_explicit_not_configured_state() -> None:

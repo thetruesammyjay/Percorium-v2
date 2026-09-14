@@ -8,6 +8,7 @@ from app.schemas.common import APIModel, AtomicAmount, RailName, TradeStatus
 
 class TradeCreate(APIModel):
     rail: RailName = RailName.SOLANA
+    tab: Literal["stocks", "pre-ipo"] = "stocks"
     sell_mint: str = Field(min_length=1, max_length=64)
     buy_mint: str = Field(min_length=1, max_length=64)
     sell_amount: AtomicAmount
@@ -27,6 +28,7 @@ class TradeResponse(APIModel):
     id: str | None = None
     status: TradeStatus | Literal["not_configured"]
     rail: RailName
+    tab: Literal["stocks", "pre-ipo"] = "stocks"
     wallet: str
     sell_mint: str
     buy_mint: str
@@ -44,7 +46,6 @@ class TradeResponse(APIModel):
     tx_signature: str | None = None
     signing_required: bool = True
     message: str
-
 
 class TradeListResponse(APIModel):
     items: list[TradeResponse]

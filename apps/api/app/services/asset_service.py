@@ -1,44 +1,58 @@
-import httpx
-from sqlalchemy.ext.asyncio import AsyncSession
-
 from app.core.config import Settings
-from app.db.models import AssetRecord
-from app.db.repositories import AssetRepository
-from app.integrations.sunrise import SunriseClient
+from app.lib.allowlist import AllowlistTab, AssetAllowlist
 from app.schemas.assets import Asset, AssetListResponse
 
 
 class AssetService:
-    def __init__(self, session: AsyncSession, settings: Settings, client: httpx.AsyncClient) -> None:
-        self.session = session
-        self.repository = AssetRepository(session)
+    def __init__(self, settings: Settings, client) -> None:
         self.settings = settings
-        self.sunrise = SunriseClient(settings, client)
+        self.allowlist = AssetAllowlist(settings, client)
 
     async def list_official_assets(
-        self, *, query: str | None = None, limit: int = 50, cursor: str | None = None
+        self,
+        *,
+        query: str | None = None,
+        limit: int = 50,
+        cursor: str | None = None,
+        tab: AllowlistTab = "stocks",
     ) -> AssetListResponse:
-        records = await self.repository.list_assets(query=query, limit=limit, cursor=cursor)
-        configured = self.sunrise.configured
-        if not records and configured:
-            upstream_assets = await self.sunrise.list_assets(query=query)
-            await self.repository.upsert_many([asset.model_dump() for asset in upstream_assets])
-            await self.session.commit()
-            records = await self.repository.list_assets(query=query, limit=limit, cursor=cursor)
-        items = [self._to_schema(record) for record in records[:limit]]
-        next_cursor = records[limit].mint if len(records) > limit else None
+        assets = await self.allowlist.load(tab)
+        normalized_query = (query or "").strip().casefold()
+        if normalized_query:
+            assets = [
+                asset
+                for asset in assets
+                if normalized_query in asset.symbol.casefold() or normalized_query in asset.name.casefold()
+            ]
+
+        start = 0
+        if cursor:
+            for index, asset in enumerate(assets):
+                if asset.mint == cursor:
+                    start = index + 1
+                    break
+        items = assets[start : start + limit]
+        next_cursor = assets[start + limit].mint if len(assets) > start + limit else None
+        configured = self.allowlist.stocks_configured if tab == "stocks" else self.allowlist.preipo_configured
+        source = "sunrise" if tab == "stocks" else "prestocks"
+        message = None
+        if not configured:
+            message = "This discovery source is not configured."
+        elif not assets:
+            message = "No assets were returned by this discovery source."
         return AssetListResponse(
             items=items,
-            source="sunrise",
+            source=source,
             configured=configured,
             next_cursor=next_cursor,
             limit=limit,
-            message=None if configured else "Sunrise asset sync is not configured.",
+            message=message,
         )
 
-    async def get_official_asset(self, mint: str) -> AssetRecord | None:
-        return await self.repository.get_by_mint(mint)
-
-    @staticmethod
-    def _to_schema(record: AssetRecord) -> Asset:
-        return Asset.model_validate(record)
+    async def get_official_asset(self, mint: str, tab: AllowlistTab | None = None) -> Asset | None:
+        tabs: tuple[AllowlistTab, ...] = (tab,) if tab is not None else ("stocks", "pre-ipo")
+        for current_tab in tabs:
+            for asset in await self.allowlist.load(current_tab):
+                if asset.mint == mint:
+                    return asset
+        return None

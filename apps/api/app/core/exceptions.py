@@ -25,7 +25,7 @@ class ProviderRequestError(AppError):
 class UnsupportedAssetError(AppError):
     def __init__(self, mint: str) -> None:
         super().__init__(
-            "The requested mint is not in the official Sunrise asset list.",
+            "The requested mint is not in the approved asset allowlist.",
             code="unsupported_asset",
             status_code=422,
             details={"mint": mint},

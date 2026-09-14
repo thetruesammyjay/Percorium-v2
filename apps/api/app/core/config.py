@@ -35,17 +35,22 @@ class Settings(BaseSettings):
     solana_token_program_id: str = "TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA"
     sunrise_api_url: str | None = None
     sunrise_api_key: str | None = None
-    sunrise_assets_path: str = "/assets"
-    sunrise_quote_path: str = "/quote"
+    sunrise_list_tokens_path: str = "/list-tokens"
     jupiter_api_key: str | None = None
     jupiter_api_url: str = "https://api.jup.ag"
     jupiter_trigger_create_path: str = "/trigger/v2/createOrder"
+    jupiter_quote_path: str = "/swap/v1/quote"
+    jupiter_swap_path: str = "/swap/v1/swap"
     finnhub_api_key: str | None = None
     finnhub_api_url: str = "https://finnhub.io/api/v1"
+    market_feed_symbols: str = "SPY,QQQ,AAPL,MSFT,NVDA,AMZN"
     privy_app_id: str | None = None
     privy_app_secret: str | None = None
     sns_resolver_url: str | None = None
     platform_fee_wallet: str | None = None
+    preipo_api_url: str = "https://prestocks.com/api/prestocks"
+    allowlist_cache_seconds: int = Field(default=900, ge=60, le=3600)
+    solana_usdt_mint: str = "Es9vMFrzaCERmJfrF4H2FYD4KCoNkY11McCe8BenwNYB"
 
     platform_fee_bps: int = Field(default=50, validation_alias=AliasChoices("PERCORIUM_FEE_BPS", "PLATFORM_FEE_BPS"))
     base_enabled: bool = False

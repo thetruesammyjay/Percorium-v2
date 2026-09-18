@@ -33,6 +33,20 @@ class FinnhubClient:
             raise ProviderRequestError(self.name, "Finnhub returned an invalid quote payload.")
         return payload
 
+    async def company_profile(self, symbol: str) -> dict[str, Any]:
+        """Return Finnhub's company profile, including its published logo URL."""
+        if not self.configured:
+            raise IntegrationNotConfiguredError(self.name)
+        payload = await get_json(
+            self.client,
+            integration=self.name,
+            url=f"{self.settings.finnhub_api_url.rstrip('/')}/stock/profile2",
+            params={"symbol": symbol.upper(), "token": self.settings.finnhub_api_key},
+        )
+        if not isinstance(payload, dict):
+            raise ProviderRequestError(self.name, "Finnhub returned an invalid company profile payload.")
+        return payload
+
     async def company_news(self, symbol: str, days: int = 7) -> list[dict[str, Any]]:
         if not self.configured:
             raise IntegrationNotConfiguredError(self.name)

@@ -9,7 +9,7 @@ import { Marquee } from "@/components/layout/Marquee";
 import { WalletButton } from "@/components/layout/WalletButton";
 import { Button } from "@/components/ui/Button";
 
-const links = [["Overview", "/dashboard"], ["Trade", "/trade"], ["Discover", "/assets"], ["Baskets", "/baskets"], ["Portfolio", "/portfolio"], ["Social", "/leaderboard"], ["More", "/more"]] as const;
+const links = [["Overview", "/dashboard"], ["Trade", "/trade"], ["Discover", "/assets"], ["Watchlist", "/watchlist"], ["Baskets", "/baskets"], ["Portfolio", "/portfolio"], ["Social", "/leaderboard"], ["More", "/more"]] as const;
 
 export function AppShell({ children }: Readonly<{ children: React.ReactNode }>) {
   const pathname = usePathname();

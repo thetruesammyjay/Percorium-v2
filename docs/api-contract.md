@@ -16,9 +16,10 @@ The web app calls FastAPI through `apps/web/lib/api.ts`. Responses use JSON and 
 ## Public routes
 
 - `GET /api/health`, `GET /api/health/live`, `GET /api/health/ready`
-- `GET /api/assets?tab=stocks|pre-ipo&query=&limit=&cursor=` - cached official discovery lists
-- `GET /api/assets/{mint}?tab=stocks|pre-ipo` - an asset resolved through the same allowlist
+- `GET /api/assets?tab=stocks|pre-ipo|new&query=&limit=&cursor=` - cached operator-reviewed discovery lists
+- `GET /api/assets/{mint}?tab=stocks|pre-ipo|new` - an asset resolved through the same allowlist
 - `GET /api/market?symbols=` - live Finnhub quote feed; no synthetic fallback
+- `GET /api/market/crypto?mints=` - live Jupiter crypto prices for the ticker feed
 - `POST /api/quotes` - short-lived Jupiter quote with fee and signing fields; the API validates the selected allowlist first
 - `GET /api/baskets`, `GET /api/baskets/{slug}` - public baskets
 - `GET /api/gifts/{claim_code}` - gift claim status
@@ -32,13 +33,13 @@ Provider-unavailable reads return an explicit `not_configured` state or an empty
 
 `app/lib/allowlist.py` is the only mint authority for the product:
 
-- `stocks` loads Sunrise `list-tokens`, then keeps rows explicitly identified as stock, equity, or ETF.
-- `pre-ipo` loads the optional PreStocks feed from `PREIPO_API_URL`.
+- `stocks` loads the operator-provided `JUPITER_STOCK_MINTS` and `JUPITER_ETF_MINTS`. If `ASSET_REGISTRY_FILE` is configured, its ticker/name fields are used as a fallback; Jupiter Tokens metadata enriches the same mints when indexed.
+- `pre-ipo` loads the optional PreStocks feed from `PREIPO_API_URL` and keeps only `PREIPO_PINNED_MINTS`.
+- `new` loads the operator-owned launch index from `NEW_LAUNCHES_FILE`.
 - Each source is cached for `ALLOWLIST_CACHE_SECONDS` (900 seconds by default).
 - SOL, USDC, and USDT are settlement assets. They may be the non-stock side of a trade, but they are never valid stock/list entries.
 - Stock-to-stock requests require both mints in the selected tab.
-- Jupiter is never used for discovery or eligibility. It is called only after the API allowlist check.
-- The `new` UI tab intentionally has no provider-backed items yet.
+- Jupiter metadata does not decide eligibility; only the configured operator mint lists can admit stock or ETF assets.
 
 ## Wallet routes
 

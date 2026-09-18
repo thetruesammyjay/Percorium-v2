@@ -30,6 +30,7 @@ class PortfolioService:
         )
         official_assets = await self.allowlist.load_stocks()
         official_assets.extend(await self.allowlist.load_preipo())
+        official_assets.extend(await self.allowlist.load_new())
         allowed_assets = {asset.mint: (asset.symbol, asset.name) for asset in official_assets}
         allowed_assets.update(
             {

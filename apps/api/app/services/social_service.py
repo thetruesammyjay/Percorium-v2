@@ -14,13 +14,16 @@ class SocialService:
     def __init__(self, session: AsyncSession) -> None:
         self.session = session
 
-    async def leaderboard(self, period: Literal["24h", "7d"] = "24h") -> LeaderboardResponse:
+    async def leaderboard(
+        self, period: Literal["24h", "7d"] = "24h", tab: Literal["stocks", "new"] = "stocks"
+    ) -> LeaderboardResponse:
         hours = 24 if period == "24h" else 24 * 7
         cutoff = datetime.now(timezone.utc) - timedelta(hours=hours)
         result = await self.session.execute(
             select(TradeIntentRecord)
             .where(
-                TradeIntentRecord.status.in_(["submitted", "confirmed"]),
+                TradeIntentRecord.status == "confirmed",
+                TradeIntentRecord.tab == tab,
                 TradeIntentRecord.is_private.is_(False),
                 TradeIntentRecord.created_at >= cutoff,
             )
@@ -53,6 +56,7 @@ class SocialService:
             if wallet in identities
         ]
         return LeaderboardResponse(
+            tab=tab,
             items=items[:100],
             period=period,
             message=None if items else "No public fills for this period.",

@@ -22,7 +22,7 @@ class BasketService:
     async def create(self, request: BasketCreate, owner_wallet: str | None) -> BasketResponse:
         for item in request.items:
             require_solana_address(item.mint, field="mint")
-            await self.allowlist.assert_asset_allowed(item.mint, request.tab)
+            await self.allowlist.assert_asset_allowed(item.mint, "stocks")
         slug = request.slug or self._slug(request.name)
         existing = await self.session.scalar(select(BasketRecord).where(BasketRecord.slug == slug))
         if existing is not None:

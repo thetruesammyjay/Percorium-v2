@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import { useEffect, useState } from "react";
 
@@ -82,7 +82,7 @@ export function DexScreenerChart({ mint, symbol }: Props) {
     return (
       <div className="chart-loading" role="status">
         <span />
-        Loading live chart…
+        Loading live chart...
       </div>
     );
   }
@@ -96,7 +96,7 @@ export function DexScreenerChart({ mint, symbol }: Props) {
           target="_blank"
           rel="noreferrer"
         >
-          Open DexScreener ↗
+          Open DexScreener -&gt;
         </a>
       </div>
     );

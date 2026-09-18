@@ -1,10 +1,9 @@
 "use client";
 
-import { useConnectWallet, usePrivy } from "@privy-io/react-auth";
+import dynamic from "next/dynamic";
+import { useCallback, useEffect, useState } from "react";
 
 import { PRIVY_ENABLED } from "@/lib/constants";
-import { shortenAddress } from "@/lib/utils";
-import { useWallet } from "@/components/providers/Providers";
 
 function WalletButtonUnavailable() {
   return (
@@ -15,40 +14,50 @@ function WalletButtonUnavailable() {
   );
 }
 
-function PrivyWalletButton() {
-  const { ready, authenticated, login, logout } = usePrivy();
-  const { connectWallet } = useConnectWallet();
-  const wallet = useWallet();
-
-  const handleClick = () => {
-    if (!ready) return;
-    if (wallet.connected && authenticated) {
-      void logout();
-      return;
-    }
-    if (authenticated) {
-      connectWallet();
-      return;
-    }
-    login();
-  };
-
-  const label = !ready
-    ? "Loading wallet"
-    : wallet.connected && wallet.address
-      ? shortenAddress(wallet.address)
-      : authenticated
-        ? "Choose wallet"
-        : "Connect wallet";
-
+function WalletButtonLoading() {
   return (
-    <button className={"wallet-button" + (wallet.connected ? " wallet-connected" : "")} type="button" onClick={handleClick} disabled={!ready}>
+    <button className="wallet-button" type="button" disabled aria-busy="true">
       <span className="wallet-dot" aria-hidden="true" />
-      {label}
+      Connect wallet
     </button>
   );
 }
 
+const PrivyWalletIsland = dynamic(
+  () => import("@/components/layout/PrivyWalletIsland").then((module) => module.PrivyWalletIsland),
+  { ssr: false, loading: WalletButtonLoading },
+);
+
 export function WalletButton() {
-  return PRIVY_ENABLED ? <PrivyWalletButton /> : <WalletButtonUnavailable />;
+  const [runtimeRequested, setRuntimeRequested] = useState(false);
+  const [pendingIntent, setPendingIntent] = useState<"connect" | null>(null);
+
+  const requestRuntime = useCallback((intent: "connect" | null = null) => {
+    setRuntimeRequested(true);
+    if (intent) setPendingIntent(intent);
+  }, []);
+
+  useEffect(() => {
+    if (!PRIVY_ENABLED) return;
+    const timer = window.setTimeout(() => requestRuntime(), 1200);
+    return () => window.clearTimeout(timer);
+  }, [requestRuntime]);
+
+  if (!PRIVY_ENABLED) return <WalletButtonUnavailable />;
+  if (runtimeRequested) {
+    return <PrivyWalletIsland pendingIntent={pendingIntent} onIntentHandled={() => setPendingIntent(null)} />;
+  }
+
+  return (
+    <button
+      className="wallet-button"
+      type="button"
+      onPointerEnter={() => requestRuntime()}
+      onFocus={() => requestRuntime()}
+      onClick={() => requestRuntime("connect")}
+    >
+      <span className="wallet-dot" aria-hidden="true" />
+      Connect wallet
+    </button>
+  );
 }

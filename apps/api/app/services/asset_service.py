@@ -32,9 +32,10 @@ class AssetService:
                     start = index + 1
                     break
         items = assets[start : start + limit]
-        next_cursor = assets[start + limit].mint if len(assets) > start + limit else None
-        configured = self.allowlist.stocks_configured if tab == "stocks" else self.allowlist.preipo_configured
-        source = "sunrise" if tab == "stocks" else "prestocks"
+        next_cursor = items[-1].mint if items and len(assets) > start + limit else None
+        configured = {"stocks": self.allowlist.stocks_configured, "pre-ipo": self.allowlist.preipo_configured,
+                      "new": self.allowlist.new_configured}[tab]
+        source = {"stocks": "jupiter", "pre-ipo": "prestocks", "new": "percorium-launch-index"}[tab]
         message = None
         if not configured:
             message = "This discovery source is not configured."
@@ -50,7 +51,7 @@ class AssetService:
         )
 
     async def get_official_asset(self, mint: str, tab: AllowlistTab | None = None) -> Asset | None:
-        tabs: tuple[AllowlistTab, ...] = (tab,) if tab is not None else ("stocks", "pre-ipo")
+        tabs: tuple[AllowlistTab, ...] = (tab,) if tab is not None else ("stocks",)
         for current_tab in tabs:
             for asset in await self.allowlist.load(current_tab):
                 if asset.mint == mint:

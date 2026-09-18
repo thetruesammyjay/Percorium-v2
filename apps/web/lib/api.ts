@@ -6,6 +6,7 @@ import type {
   GiftCreateRequest,
   GiftResponse,
   MarketFeedResponse,
+  NewsResponse,
   OrderCreateRequest,
   OrderResponse,
   PortfolioResponse,
@@ -13,6 +14,7 @@ import type {
   QuoteResponse,
   TradeCreateRequest,
   TradeResponse,
+  WatchlistResponse,
 } from "@/types";
 
 export class ApiError extends Error {
@@ -27,6 +29,7 @@ async function request<T>(path: string, init?: RequestInit): Promise<T> {
     headers: { "Content-Type": "application/json", ...init?.headers },
   });
   if (!response.ok) throw new ApiError(response.status, await response.text());
+  if (response.status === 204) return undefined as T;
   return response.json() as Promise<T>;
 }
 
@@ -50,6 +53,17 @@ export async function getMarketFeed(symbols?: string[]): Promise<MarketFeedRespo
   return request<MarketFeedResponse>("/market" + suffix, { cache: "no-store" });
 }
 
+export async function getCryptoMarketFeed(mints?: string[]): Promise<MarketFeedResponse> {
+  const suffix = mints?.length ? "?mints=" + encodeURIComponent(mints.join(",")) : "";
+  return request<MarketFeedResponse>("/market/crypto" + suffix, { cache: "no-store" });
+}
+
+export async function getNews(symbol?: string, days = 7): Promise<NewsResponse> {
+  const params = new URLSearchParams({ days: String(days) });
+  if (symbol) params.set("symbol", symbol);
+  return request<NewsResponse>("/news?" + params.toString(), { cache: "no-store" });
+}
+
 export async function createQuote(payload: QuoteRequest): Promise<QuoteResponse> {
   return request<QuoteResponse>("/quotes", { method: "POST", body: JSON.stringify(payload) });
 }
@@ -62,6 +76,27 @@ function idempotencyKey(): string {
 
 function walletHeaders(wallet: string): HeadersInit {
   return { "X-Wallet-Address": wallet };
+}
+
+export async function getWatchlist(wallet: string): Promise<WatchlistResponse> {
+  return request<WatchlistResponse>("/watchlist", {
+    headers: walletHeaders(wallet),
+    cache: "no-store",
+  });
+}
+
+export async function addToWatchlist(mint: string, wallet: string, tab: DiscoveryTab = "stocks") {
+  return request<WatchlistResponse["items"][number]>(
+    "/watchlist/" + encodeURIComponent(mint) + "?tab=" + encodeURIComponent(tab),
+    { method: "POST", headers: walletHeaders(wallet) },
+  );
+}
+
+export async function removeFromWatchlist(mint: string, wallet: string): Promise<void> {
+  await request<unknown>("/watchlist/" + encodeURIComponent(mint), {
+    method: "DELETE",
+    headers: walletHeaders(wallet),
+  });
 }
 
 export async function createTrade(payload: TradeCreateRequest): Promise<TradeResponse> {

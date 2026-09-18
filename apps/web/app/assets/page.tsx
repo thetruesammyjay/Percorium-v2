@@ -32,7 +32,7 @@ function LiveQuoteCard({ quote }: { quote: MarketQuote }) {
   return (
     <article className="quote-card">
       <div className="quote-card-top">
-        <AssetIcon symbol={quote.symbol} kind="stock" size={44} />
+        <AssetIcon symbol={quote.symbol} kind="stock" logoUrl={quote.logo_url} size={44} />
         <Badge tone={positive ? "mint" : "violet"}>{quote.symbol}</Badge>
       </div>
       <div className="quote-card-price">{formatPrice(quote.price)}</div>
@@ -53,7 +53,7 @@ function MarketFeed({ feed, loading, error }: { feed: MarketFeedResponse | null;
         </div>
         <div className="feed-meta">
           <StatusPill status={feed?.configured ? "success" : "pending"}>
-            {feed?.configured ? "Finnhub live" : "Feed waiting"}
+            {feed?.configured ? `${feed.source} live` : "Feed waiting"}
           </StatusPill>
           <p>Refreshes every 30 seconds. Quotes are market data, not asset eligibility.</p>
         </div>
@@ -168,7 +168,8 @@ export default function AssetsPage() {
               <StatusPill status={assetsConfigured ? "success" : "pending"}>
                 {assetsConfigured ? "Approved list" : "Source waiting"}
               </StatusPill>
-              <p>Stocks are official. Pre-IPO is an optional PreStocks source. Jupiter token search is not used for discovery.</p>
+              <p>Stocks are operator-approved mints enriched by Jupiter. Pre-IPO remains an optional PreStocks source.</p>
+              <Link className="text-link" href="/watchlist">Open watchlist -&gt;</Link>
             </div>
           </div>
           <div className="discovery-tabs" role="tablist" aria-label="Discovery source">
@@ -200,8 +201,9 @@ export default function AssetsPage() {
                   symbol={asset.symbol}
                   name={asset.name}
                   kind={asset.kind}
+                  logoUrl={asset.logo_url}
                   change={changeBySymbol.get(asset.symbol)}
-                  href={"/assets/" + asset.mint}
+                  href={"/assets/" + asset.mint + "?tab=" + view}
                 />
               ))}</div>
             ) : (

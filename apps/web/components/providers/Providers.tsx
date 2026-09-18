@@ -1,10 +1,8 @@
 "use client";
 
-import { PrivyProvider, usePrivy } from "@privy-io/react-auth";
-import { toSolanaWalletConnectors, useWallets as useSolanaWallets } from "@privy-io/react-auth/solana";
-import { createContext, useCallback, useContext, useEffect, useMemo, useState } from "react";
+import { createContext, useCallback, useContext, useMemo, useState } from "react";
 
-import { PRIVY_ENABLED, SOLANA_CLUSTER } from "@/lib/constants";
+import { PRIVY_ENABLED } from "@/lib/constants";
 
 type WalletContextValue = {
   connected: boolean;
@@ -43,56 +41,14 @@ function WalletProvider({ children }: Readonly<{ children: React.ReactNode }>) {
   );
 }
 
-function PrivyWalletBridge({ children }: Readonly<{ children: React.ReactNode }>) {
-  const { authenticated } = usePrivy();
-  const { wallets } = useSolanaWallets();
+export function useWalletRuntime() {
   const runtime = useContext(WalletRuntimeContext);
-  const wallet = wallets[0];
-  const setRuntime = runtime?.setRuntime;
-  const solanaChain = (SOLANA_CLUSTER === "mainnet-beta" ? "solana:5eykt4UsFv8P8NJdTREpY1vzqKqZKvdp" : SOLANA_CLUSTER === "testnet" ? "solana:4uhcVJyU9pJkvQyS88uRDiswHXSCkY3z" : "solana:EtWTRABZaYq6iMfeYKouRu166VU2xqa1") as `${string}:${string}`;
-
-  useEffect(() => {
-    if (!setRuntime) return;
-    const connected = Boolean(authenticated && wallet);
-    setRuntime({
-      connected,
-      address: connected ? wallet.address : undefined,
-      signAndSend: connected
-        ? async (transaction: Uint8Array) => {
-            const response = await wallet.signAndSendTransaction({ transaction, chain: solanaChain });
-            return response.signature;
-          }
-        : undefined,
-    });
-  }, [authenticated, setRuntime, solanaChain, wallet]);
-
-  return <>{children}</>;
+  if (!runtime) {
+    throw new Error("useWalletRuntime must be used inside WalletProvider");
+  }
+  return runtime;
 }
 
-const solanaConnectors = toSolanaWalletConnectors({ shouldAutoConnect: false });
-
 export function Providers({ children }: Readonly<{ children: React.ReactNode }>) {
-  if (!PRIVY_ENABLED) return <WalletProvider>{children}</WalletProvider>;
-
-  return (
-    <PrivyProvider
-      appId={process.env.NEXT_PUBLIC_PRIVY_APP_ID ?? ""}
-      config={{
-        appearance: {
-          theme: "light",
-          accentColor: "#000000",
-          walletChainType: "solana-only",
-        },
-        loginMethods: ["google", "wallet"],
-        externalWallets: {
-          solana: { connectors: solanaConnectors },
-        },
-        embeddedWallets: { solana: { createOnLogin: "all-users" } },
-      }}
-    >
-      <WalletProvider>
-        <PrivyWalletBridge>{children}</PrivyWalletBridge>
-      </WalletProvider>
-    </PrivyProvider>
-  );
+  return <WalletProvider>{children}</WalletProvider>;
 }

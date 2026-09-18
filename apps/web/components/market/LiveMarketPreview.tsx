@@ -42,6 +42,7 @@ export function LiveMarketPreview() {
         symbol={quote.symbol}
         name="Market quote"
         kind="stock"
+        logoUrl={quote.logo_url}
         change={(quote.change_percent >= 0 ? "+" : "") + quote.change_percent.toFixed(2) + "%"}
         href={`/assets?query=${encodeURIComponent(quote.symbol)}`}
       />

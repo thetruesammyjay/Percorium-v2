@@ -12,6 +12,7 @@ class LeaderboardItem(APIModel):
 
 
 class LeaderboardResponse(APIModel):
+    tab: Literal["stocks", "new"] = "stocks"
     items: list[LeaderboardItem]
     period: Literal["24h", "7d"]
     message: str | None = None

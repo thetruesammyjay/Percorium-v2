@@ -7,6 +7,8 @@ from app.schemas.common import APIModel
 
 class MarketQuote(APIModel):
     symbol: str = Field(min_length=1, max_length=12)
+    mint: str | None = None
+    logo_url: str | None = Field(default=None, max_length=500)
     price: float = Field(ge=0)
     change: float
     change_percent: float

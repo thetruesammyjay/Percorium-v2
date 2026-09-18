@@ -17,7 +17,7 @@ The new root-level README documents the target monorepo architecture. The Solana
 ## Product direction
 
 - Solana is the default network.
-- Official Sunrise-listed stock and ETF mints are the only supported assets.
+- Official operator-reviewed stock and ETF mints are the only supported assets. Jupiter supplies metadata and prices for those mints.
 - Users connect through Privy with Google and Solana wallet support, including Phantom and Backpack-compatible wallets.
 - Every transaction is signed by the user’s wallet.
 - Percorium charges a 50 bps platform fee.
@@ -44,10 +44,10 @@ The backend never receives a private key. It returns a validated transaction or 
 
 ### Baskets
 
-- Custom baskets containing 2–8 official Sunrise mints.
+- Custom baskets containing 2–8 official operator-reviewed mints.
 - Weights must total exactly 100%.
 - Shareable basket URLs use `/b`.
-- Preset baskets are backed by Sunrise-listed index or ETF mints.
+- Preset baskets are backed by operator-reviewed index or ETF mints.
 - Basket previews show constituents, weights, estimated fees, and expected execution steps.
 - Buying a basket is a prefilled multi-leg trade. It does not create an unofficial token.
 
@@ -107,7 +107,7 @@ Recipients can be addressed by:
 
 ### Discovery
 
-- Instant search over the Sunrise asset list.
+- Instant search over the Jupiter-enriched operator asset list.
 - Per-user watchlists.
 - Asset pages are identified by mint address, not ticker alone.
 
@@ -153,7 +153,7 @@ Chain-specific behavior belongs behind rail adapters:
 
 ```text
 SolanaRail
-├── Sunrise
+├── Jupiter Tokens API + operator mint registry
 ├── Jupiter Trigger V2
 ├── Alchemy RPC
 └── SPL token account handling
@@ -229,8 +229,9 @@ For eligible copy-once trades, the copy master receives 10% of the Percorium fee
 
 | Purpose | Primary source | Fallback or note |
 | --- | --- | --- |
-| Official Solana stock/ETF list | Sunrise | Reject unknown mints |
+| Official Solana stock/ETF list | Operator mint registry + Jupiter Tokens API | Reject unknown mints |
 | Solana quotes and swaps | Jupiter | Called only after allowlist validation |
+| Solana token prices and metadata | Jupiter Price API v3 / Tokens API v2 | Used for crypto ticker and token artwork |
 | Limit and DCA orders | Jupiter Trigger V2 | Persist order state |
 | Solana RPC | Alchemy | Configure separate public/private endpoints as needed |
 | Charts | DexScreener | GeckoTerminal fallback |
@@ -268,7 +269,7 @@ The brand asset pipeline should provide:
 
 - A vector or simplified logo mark for navigation and favicons.
 - A monochrome logo for dense product surfaces.
-- Small Sunrise stock and ETF marks.
+- Jupiter-hosted token artwork for reviewed stock and ETF mints.
 - Light and dark logo variants where contrast requires them.
 - Raster fallbacks for social cards and install surfaces.
 
@@ -384,19 +385,24 @@ The API reads provider configuration from `apps/api/app/core/config.py`. Keep al
 DATABASE_URL=
 REDIS_URL=
 ALCHEMY_SOLANA_RPC_URL=
-SOLANA_USDC_MINT=EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGkZwyTDt1v
+SOLANA_USDC_MINT=EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v
 SOLANA_WRAPPED_SOL_MINT=So11111111111111111111111111111111111111112
 SOLANA_USDT_MINT=Es9vMFrzaCERmJfrF4H2FYD4KCoNkY11McCe8BenwNYB
-SUNRISE_API_URL=
-SUNRISE_API_KEY=
-SUNRISE_LIST_TOKENS_PATH=/list-tokens
+JUPITER_STOCK_MINTS=
+JUPITER_ETF_MINTS=
+# Optional CSV metadata registry; relative paths resolve from apps/api.
+ASSET_REGISTRY_FILE=../../sunrise_stocks_etfs_prestocks.csv
 PREIPO_API_URL=https://prestocks.com/api/prestocks
 ALLOWLIST_CACHE_SECONDS=900
 JUPITER_API_KEY=
 JUPITER_API_URL=https://api.jup.ag
+JUPITER_TOKENS_PATH=/tokens/v2/search
+JUPITER_PRICE_PATH=/price/v3
 JUPITER_QUOTE_PATH=/swap/v1/quote
 JUPITER_SWAP_PATH=/swap/v1/swap
 FINNHUB_API_KEY=
+MARKET_FEED_SYMBOLS=SPY,QQQ,DIA,IWM,AAPL,MSFT,NVDA,AMZN,GOOGL,META,TSLA,AVGO,BRK.B,JPM,V,UNH,LLY,XOM,AMD,NFLX,COST,ORCL,PLTR
+CRYPTO_FEED_MINTS=So11111111111111111111111111111111111111112,EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v,JUPyiwrYJFskUPiHa7hkeR8VUtAeFoSYbKedZNsDvCN
 PRIVY_APP_ID=
 PRIVY_APP_SECRET=
 PLATFORM_FEE_WALLET=
@@ -404,6 +410,7 @@ PLATFORM_FEE_BPS=50
 BASE_ENABLED=false
 MAGICBLOCK_ENABLED=false
 AUTH_REQUIRED=false
+HTTP_TRUST_ENV=false
 ```
 
 ### Web configuration
@@ -424,7 +431,7 @@ Never expose API keys, wallet secrets, Privy server credentials, or fee-wallet a
 Backend tests should cover:
 
 - Official mint validation.
-- Sunrise allowlist normalization.
+- Jupiter token metadata normalization and operator mint validation.
 - Jupiter Trigger V2 order payloads.
 - Fee calculation and copy-master split.
 - Quote expiry and replay protection.
@@ -453,7 +460,7 @@ Use Solana devnet or provider-supported test environments for transaction constr
 
 ## Security requirements
 
-- Only official Sunrise-listed mints may be quoted or traded.
+- Only operator-reviewed mints enriched by Jupiter may be quoted or traded.
 - Validate mint address, token program, decimals, and asset metadata.
 - Wallets sign all user-authorized transactions.
 - Backend endpoints must validate authenticated user context.
@@ -479,8 +486,7 @@ Browser
   │      └── FastAPI JSON API
   │              ├── PostgreSQL
   │              ├── Redis / worker
-  │              ├── Sunrise
-  │              ├── Jupiter
+  │              ├── Jupiter Tokens / Price / Swap
   │              ├── Alchemy
   │              ├── DexScreener / GeckoTerminal
   │              └── Finnhub
@@ -490,6 +496,8 @@ Browser
 
 The API should expose health and readiness endpoints. Background workers should handle provider refreshes, news caching, order status polling, and transaction reconciliation rather than blocking user-facing requests.
 
+For the Railway and Vercel environment checklist, see [docs/deployment.md](docs/deployment.md).
+
 ## Roadmap
 
 ### Phase 1: Solana foundation
@@ -497,7 +505,7 @@ The API should expose health and readiness endpoints. Background workers should 
 - New Next.js shell and design tokens.
 - FastAPI service with OpenAPI contracts.
 - Privy Google and Solana wallet connection.
-- Sunrise asset discovery.
+- Jupiter-enriched asset discovery.
 - Solana portfolio balances.
 - SOL/USDC to stock quotes.
 
@@ -515,7 +523,7 @@ The API should expose health and readiness endpoints. Background workers should 
 - DCA orders.
 - 2–8 custom baskets.
 - `/b` share links.
-- Sunrise-listed preset ETF/index assets.
+- Operator-reviewed preset ETF/index assets.
 
 ### Phase 4: Gifts and identity
 

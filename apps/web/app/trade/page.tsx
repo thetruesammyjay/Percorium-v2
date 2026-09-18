@@ -95,7 +95,7 @@ export default function TradePage() {
   }, []);
 
   const tradeAssets = useMemo<TradeAsset[]>(
-    () => [...settlementAssets, ...assets.map((asset) => ({ ...asset, decimals: 6 }))],
+    () => [...settlementAssets, ...assets.map((asset) => ({ ...asset, kind: asset.kind === "etf" ? "etf" as const : "stock" as const, decimals: 6 }))],
     [assets],
   );
   const sellAsset = tradeAssets.find((asset) => asset.mint === sellMint);

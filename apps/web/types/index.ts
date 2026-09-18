@@ -1,5 +1,5 @@
 export type Rail = "solana" | "base";
-export type AssetKind = "stock" | "etf";
+export type AssetKind = "stock" | "etf" | "pre-ipo" | "memestock";
 export type TradeMode = "swap" | "limit" | "dca";
 export type DiscoveryTab = "stocks" | "pre-ipo";
 
@@ -11,6 +11,7 @@ export type Asset = {
   logo_url?: string;
   verified?: boolean;
   tradable?: boolean;
+  news_symbol?: string | null;
 };
 
 export type AssetListResponse = {
@@ -24,6 +25,8 @@ export type AssetListResponse = {
 
 export type MarketQuote = {
   symbol: string;
+  mint?: string | null;
+  logo_url?: string | null;
   price: number;
   change: number;
   change_percent: number;
@@ -42,6 +45,33 @@ export type MarketFeedResponse = {
   source: string;
   fetched_at: string;
   message?: string | null;
+};
+
+export type NewsItem = {
+  id: string;
+  symbol: string;
+  headline: string;
+  summary?: string | null;
+  source: string;
+  url: string;
+  published_at: string;
+  category: string;
+};
+
+export type NewsResponse = {
+  items: NewsItem[];
+  configured: boolean;
+  fallback_symbol?: string | null;
+  cached?: boolean;
+};
+
+export type WatchlistItem = {
+  mint: string;
+  created_at: string;
+};
+
+export type WatchlistResponse = {
+  items: WatchlistItem[];
 };
 
 export type QuoteRequest = {

@@ -10,6 +10,9 @@ class Asset(APIModel):
     symbol: str = Field(min_length=1, max_length=24)
     name: str = Field(min_length=1, max_length=160)
     kind: AssetKind
+    decimals: int = Field(default=6, ge=0, le=18)
+    featured: bool = False
+    news_symbol: str | None = Field(default=None, max_length=12)
     logo_url: str | None = Field(default=None, max_length=500)
     verified: bool = True
     tradable: bool = True
@@ -18,6 +21,6 @@ class Asset(APIModel):
 
 class AssetListResponse(Pagination):
     items: list[Asset]
-    source: str = "sunrise"
+    source: str = "jupiter"
     configured: bool = False
     message: str | None = None

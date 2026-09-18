@@ -1,4 +1,5 @@
 import asyncio
+import time
 from datetime import datetime, timezone
 from typing import Any
 
@@ -8,6 +9,9 @@ from app.core.config import Settings
 from app.core.exceptions import AppError, IntegrationNotConfiguredError, ProviderRequestError
 from app.integrations.finnhub import FinnhubClient
 from app.schemas.market import MarketFeedResponse, MarketQuote
+
+_LOGO_CACHE_TTL_SECONDS = 86_400
+_LOGO_CACHE: dict[str, tuple[float, str | None]] = {}
 
 
 class MarketService:
@@ -57,6 +61,9 @@ class MarketService:
             message = "Live market data is temporarily unavailable from Finnhub."
         elif failures:
             message = f"{failures} market quote{'' if failures == 1 else 's'} unavailable."
+        if items:
+            logos = await self._load_logos([item.symbol for item in items])
+            items = [item.model_copy(update={"logo_url": logos.get(item.symbol)}) for item in items]
         return MarketFeedResponse(
             items=items,
             symbols=requested,
@@ -64,6 +71,33 @@ class MarketService:
             fetched_at=fetched_at,
             message=message,
         )
+
+    async def _load_logos(self, symbols: list[str]) -> dict[str, str | None]:
+        now = time.monotonic()
+        result: dict[str, str | None] = {}
+        missing: list[str] = []
+        for symbol in symbols:
+            cached = _LOGO_CACHE.get(symbol)
+            if cached is not None and cached[0] > now:
+                result[symbol] = cached[1]
+            else:
+                missing.append(symbol)
+
+        if missing:
+            profiles = await asyncio.gather(
+                *(self.finnhub.company_profile(symbol) for symbol in missing),
+                return_exceptions=True,
+            )
+            expires_at = now + _LOGO_CACHE_TTL_SECONDS
+            for symbol, profile in zip(missing, profiles, strict=True):
+                logo = None
+                if isinstance(profile, dict):
+                    candidate = profile.get("logo")
+                    if isinstance(candidate, str) and candidate.startswith("https://"):
+                        logo = candidate
+                _LOGO_CACHE[symbol] = (expires_at, logo)
+                result[symbol] = logo
+        return result
 
     @staticmethod
     def _normalize_symbols(value: str) -> list[str]:
@@ -77,9 +111,9 @@ class MarketService:
             symbols.append(symbol)
         if not symbols:
             raise AppError("At least one ticker symbol is required.", code="invalid_symbols", status_code=422)
-        if len(symbols) > 8:
+        if len(symbols) > 50:
             raise AppError(
-                "A maximum of eight ticker symbols may be requested.",
+                "A maximum of 50 ticker symbols may be requested.",
                 code="invalid_symbols",
                 status_code=422,
             )

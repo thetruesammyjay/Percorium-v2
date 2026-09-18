@@ -29,6 +29,9 @@ async def lifespan(app: FastAPI):
         timeout=httpx.Timeout(settings.http_timeout_seconds),
         limits=httpx.Limits(max_connections=50, max_keepalive_connections=20),
         follow_redirects=True,
+        # Railway has no proxy requirement. Keeping this false by default also
+        # prevents a local HTTP(S)_PROXY from intercepting provider requests.
+        trust_env=settings.http_trust_env,
     )
     await initialize_database(settings)
     try:

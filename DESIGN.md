@@ -224,7 +224,7 @@ No gradients. The 3D ribbon elements carry all dimensional weight, and all flat 
 
 ## Animation Philosophy
 
-The marquee strip scrolls horizontally on a continuous loop. The 3D ribbons are static 3D renders, not animated. Sticker decorations are static. The site reads as a printed collage, not a kinetic experience — motion is restricted to the marquee and minimal hover transitions on buttons.
+The marquee strip scrolls horizontally on a continuous loop. The 3D ribbons are static 3D renders, and sticker decorations are static. The site reads as a printed collage, not a kinetic experience. Product motion is restricted to minimal hover transitions, button feedback, and one transform-only route loading signal: a short electric-blue sweep inside a bordered paper track while a new page is being fetched. The route signal is under one second per pass, does not shift layout, and stops for users who prefer reduced motion.
 
 ## Similar Brands
 

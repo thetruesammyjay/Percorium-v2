@@ -18,6 +18,8 @@ class RailName(StrEnum):
 class AssetKind(StrEnum):
     STOCK = "stock"
     ETF = "etf"
+    PREIPO = "pre-ipo"
+    MEMESTOCK = "memestock"
 
 
 class TradeStatus(StrEnum):

@@ -20,7 +20,7 @@ class Settings(BaseSettings):
         default="development", validation_alias=AliasChoices("APP_ENV", "ENVIRONMENT")
     )
     api_prefix: str = "/api"
-    cors_origins: str = "http://localhost:3000"
+    cors_origins: str = "http://localhost:3000,http://localhost:3001"
     log_level: str = "INFO"
     docs_enabled: bool = True
 
@@ -38,17 +38,36 @@ class Settings(BaseSettings):
     sunrise_list_tokens_path: str = "/list-tokens"
     jupiter_api_key: str | None = None
     jupiter_api_url: str = "https://api.jup.ag"
+    jupiter_tokens_path: str = "/tokens/v2/search"
+    jupiter_price_path: str = "/price/v3"
     jupiter_trigger_create_path: str = "/trigger/v2/createOrder"
     jupiter_quote_path: str = "/swap/v1/quote"
     jupiter_swap_path: str = "/swap/v1/swap"
     finnhub_api_key: str | None = None
     finnhub_api_url: str = "https://finnhub.io/api/v1"
-    market_feed_symbols: str = "SPY,QQQ,AAPL,MSFT,NVDA,AMZN"
+    market_feed_symbols: str = (
+        "SPY,QQQ,DIA,IWM,AAPL,MSFT,NVDA,AMZN,GOOGL,META,TSLA,AVGO,BRK.B,JPM,V,UNH,LLY,XOM,AMD,NFLX,COST,ORCL,PLTR"
+    )
+    crypto_feed_mints: str = (
+        "So11111111111111111111111111111111111111112,"
+        "EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGgZwyTDt1v,"
+        "JUPyiwrYJFskUPiHa7hkeR8VUtAeFoSYbKedZNsDvCN"
+    )
+    jupiter_stock_mints: str = ""
+    jupiter_etf_mints: str = ""
+    # Optional operator-maintained CSV registry. It supplies the curated
+    # symbol/name when Jupiter has not indexed a mint yet.
+    asset_registry_file: str | None = Field(
+        default=None,
+        validation_alias=AliasChoices("ASSET_REGISTRY_FILE", "ASSET_REGISTRY_PATH"),
+    )
     privy_app_id: str | None = None
     privy_app_secret: str | None = None
     sns_resolver_url: str | None = None
     platform_fee_wallet: str | None = None
     preipo_api_url: str = "https://prestocks.com/api/prestocks"
+    preipo_pinned_mints: str = ""
+    new_launches_file: str | None = None
     allowlist_cache_seconds: int = Field(default=900, ge=60, le=3600)
     solana_usdt_mint: str = "Es9vMFrzaCERmJfrF4H2FYD4KCoNkY11McCe8BenwNYB"
 
@@ -57,6 +76,7 @@ class Settings(BaseSettings):
     magicblock_enabled: bool = False
     auth_required: bool = Field(default=False, validation_alias="AUTH_REQUIRED")
     http_timeout_seconds: float = Field(default=10.0, gt=0, le=60.0)
+    http_trust_env: bool = Field(default=False, validation_alias=AliasChoices("HTTP_TRUST_ENV"))
     quote_ttl_seconds: int = Field(default=30, ge=5, le=300)
 
     @field_validator("api_prefix")

@@ -12,7 +12,7 @@ async def manifest() -> MCPManifestResponse:
         tools=[
             MCPTool(
                 name="list_assets",
-                description="List official Sunrise-listed stocks and ETFs.",
+                description="List operator-reviewed stocks and ETFs enriched by Jupiter.",
                 method="GET",
                 path="/api/assets",
                 requires_wallet=False,
@@ -38,7 +38,7 @@ async def manifest() -> MCPManifestResponse:
             ),
             MCPTool(
                 name="basket",
-                description="Create a basket of official Sunrise assets.",
+                description="Create a basket of operator-reviewed assets.",
                 method="POST",
                 path="/api/baskets",
             ),

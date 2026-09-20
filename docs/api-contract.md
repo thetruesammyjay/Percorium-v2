@@ -24,6 +24,7 @@ The web app calls FastAPI through `apps/web/lib/api.ts`. Responses use JSON and 
 - `GET /api/baskets`, `GET /api/baskets/{slug}` - public baskets
 - `GET /api/gifts/{claim_code}` - gift claim status
 - `GET /api/news?symbol=&days=` - cached Finnhub company and earnings news
+- `GET /api/news/feed?days=` - cached market-wide tech and market stories plus IPO and earnings calendar events
 - `GET /api/social/leaderboard?period=24h|7d`
 - `GET /api/mcp/manifest` - machine-readable tool catalog
 

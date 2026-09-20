@@ -6,7 +6,7 @@
 - Alchemy: Solana RPC and token-balance reads.
 - Jupiter: prices, quotes, swaps, plus Trigger V2 limit/DCA boundaries, only after API allowlist validation.
 - DexScreener: primary Solana pair charts; Gecko Terminal is the fallback.
-- Finnhub: live market quotes and company/earnings news; links are cached and opened externally.
+- Finnhub: live market quotes, company news, general market news, IPO calendar events, and earnings calendar events; links are cached and opened externally.
 - Privy: Google authentication and Solana wallet onboarding.
 
 Provider responses must be normalized and validated before they reach a signing flow. Provider availability is not proof that an asset or route is official.

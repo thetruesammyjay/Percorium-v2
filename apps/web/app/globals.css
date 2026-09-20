@@ -293,6 +293,23 @@ button { cursor: pointer; }
 .news-item strong { font-size: 17px; line-height: 1.15; }
 .news-item span:last-child { color: #444; font-size: 13px; line-height: 1.4; }
 .news-state { padding: 24px; border: 1px dashed var(--ink); border-radius: 16px; background: var(--mist); color: #444; font-size: 13px; line-height: 1.45; }
+.news-page { background: #202b3b; color: #f3f5f8; }
+.news-page .page-hero p { color: #c7ced8; }
+.new-feed-card { padding: 28px; border: 1px solid #4c5868; border-radius: 28px; background: #202b3b; }
+.new-feed-heading { display: flex; align-items: flex-end; justify-content: space-between; gap: 24px; margin-bottom: 26px; }
+.new-feed-heading .eyebrow { color: #c7ced8; }
+.new-feed-heading h2 { margin: 0; font-size: clamp(42px, 6vw, 74px); line-height: .86; letter-spacing: -.06em; }
+.new-feed-heading > p { max-width: 360px; margin: 0; color: #c7ced8; font-size: 14px; line-height: 1.45; }
+.new-feed-list { display: grid; }
+.new-feed-item { display: flex; align-items: flex-start; gap: 14px; padding: 16px 0; border-top: 1px solid #4c5868; color: #f3f5f8; }
+.new-feed-item:last-child { border-bottom: 1px solid #4c5868; }
+.new-feed-item:hover { color: #8bc5ff; }
+.new-feed-item-copy { display: grid; min-width: 0; gap: 6px; }
+.new-feed-item-meta { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; color: #9fa9b7; font-size: 11px; font-weight: 800; letter-spacing: .07em; text-transform: uppercase; }
+.new-feed-category { color: #8bc5ff; }
+.new-feed-item strong { font-size: 18px; line-height: 1.22; }
+.new-feed-summary { color: #b9c1cc; font-size: 13px; line-height: 1.4; }
+.new-feed-state { padding: 36px 20px; border: 1px dashed #596676; border-radius: 16px; color: #c7ced8; text-align: center; }
 .watchlist-row { display: flex; align-items: center; justify-content: space-between; gap: 16px; padding: 12px; border: 1px solid var(--ink); border-radius: var(--radius-card); background: var(--white); }
 .watchlist-row:hover { background: var(--sun); }
 .watchlist-asset { display: flex; min-width: 0; align-items: center; gap: 12px; }
@@ -302,4 +319,7 @@ button { cursor: pointer; }
   .asset-actions .button { width: 100%; }
   .news-heading { align-items: flex-start; flex-direction: column; }
   .watchlist-row { align-items: flex-start; flex-direction: column; }
+  .new-feed-card { padding: 20px; }
+  .new-feed-heading { align-items: flex-start; flex-direction: column; }
+  .new-feed-item strong { font-size: 16px; }
 }

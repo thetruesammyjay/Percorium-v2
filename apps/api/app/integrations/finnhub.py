@@ -67,15 +67,60 @@ class FinnhubClient:
             raise ProviderRequestError(self.name, "Finnhub returned an invalid news payload.")
         return [item for item in payload if isinstance(item, dict)]
 
-    async def earnings(self, symbol: str) -> list[dict[str, Any]]:
+    async def market_news(self, category: str = "general") -> list[dict[str, Any]]:
         if not self.configured:
             raise IntegrationNotConfiguredError(self.name)
         payload = await get_json(
             self.client,
             integration=self.name,
+            url=f"{self.settings.finnhub_api_url.rstrip('/')}/news",
+            params={"category": category, "token": self.settings.finnhub_api_key},
+        )
+        if not isinstance(payload, list):
+            raise ProviderRequestError(self.name, "Finnhub returned an invalid market news payload.")
+        return [item for item in payload if isinstance(item, dict)]
+
+    async def ipo_calendar(self, start: date, end: date) -> list[dict[str, Any]]:
+        if not self.configured:
+            raise IntegrationNotConfiguredError(self.name)
+        payload = await get_json(
+            self.client,
+            integration=self.name,
+            url=f"{self.settings.finnhub_api_url.rstrip('/')}/calendar/ipo",
+            params={"from": start.isoformat(), "to": end.isoformat(), "token": self.settings.finnhub_api_key},
+        )
+        if not isinstance(payload, dict) or not isinstance(payload.get("ipoCalendar"), list):
+            raise ProviderRequestError(self.name, "Finnhub returned an invalid IPO calendar payload.")
+        return [item for item in payload["ipoCalendar"] if isinstance(item, dict)]
+
+    async def earnings_calendar(
+        self,
+        start: date,
+        end: date,
+        symbol: str | None = None,
+    ) -> list[dict[str, Any]]:
+        if not self.configured:
+            raise IntegrationNotConfiguredError(self.name)
+        params: dict[str, str] = {
+            "from": start.isoformat(),
+            "to": end.isoformat(),
+            "token": self.settings.finnhub_api_key or "",
+        }
+        if symbol:
+            params["symbol"] = symbol.upper()
+        payload = await get_json(
+            self.client,
+            integration=self.name,
             url=f"{self.settings.finnhub_api_url.rstrip('/')}/calendar/earnings",
-            params={"symbol": symbol.upper(), "token": self.settings.finnhub_api_key},
+            params=params,
         )
         if not isinstance(payload, dict) or not isinstance(payload.get("earningsCalendar"), list):
-            raise ProviderRequestError(self.name, "Finnhub returned an invalid earnings payload.")
+            raise ProviderRequestError(self.name, "Finnhub returned an invalid earnings calendar payload.")
         return [item for item in payload["earningsCalendar"] if isinstance(item, dict)]
+
+    async def earnings(self, symbol: str) -> list[dict[str, Any]]:
+        return await self.earnings_calendar(
+            date.today() - timedelta(days=365),
+            date.today() + timedelta(days=365),
+            symbol=symbol,
+        )

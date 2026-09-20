@@ -64,6 +64,10 @@ export async function getNews(symbol?: string, days = 7): Promise<NewsResponse> 
   return request<NewsResponse>("/news?" + params.toString(), { cache: "no-store" });
 }
 
+export async function getNewsFeed(days = 7): Promise<NewsResponse> {
+  return request<NewsResponse>("/news/feed?days=" + encodeURIComponent(String(days)), { cache: "no-store" });
+}
+
 export async function createQuote(payload: QuoteRequest): Promise<QuoteResponse> {
   return request<QuoteResponse>("/quotes", { method: "POST", body: JSON.stringify(payload) });
 }

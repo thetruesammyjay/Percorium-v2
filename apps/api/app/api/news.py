@@ -10,6 +10,16 @@ from app.services.news_service import NewsService
 router = APIRouter()
 
 
+@router.get("/feed", response_model=NewsResponse)
+async def get_news_feed(
+    days: int = Query(default=7, ge=1, le=30),
+    session: AsyncSession = Depends(database_session),
+    settings: Settings = Depends(settings_dependency),
+    client: httpx.AsyncClient = Depends(http_client),
+) -> NewsResponse:
+    return await NewsService(session, settings, client).get_feed(days=days)
+
+
 @router.get("", response_model=NewsResponse)
 async def get_news(
     symbol: str | None = Query(default=None, min_length=1, max_length=12),

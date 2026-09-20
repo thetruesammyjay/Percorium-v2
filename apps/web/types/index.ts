@@ -63,6 +63,7 @@ export type NewsResponse = {
   configured: boolean;
   fallback_symbol?: string | null;
   cached?: boolean;
+  message?: string | null;
 };
 
 export type WatchlistItem = {

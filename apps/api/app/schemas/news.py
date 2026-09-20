@@ -21,3 +21,4 @@ class NewsResponse(APIModel):
     configured: bool
     fallback_symbol: str | None = None
     cached: bool = False
+    message: str | None = None

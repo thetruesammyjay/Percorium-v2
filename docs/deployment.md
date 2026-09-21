@@ -7,7 +7,9 @@ Percorium deploys as two services:
 
 ## Railway API
 
-Create a Railway service from the repository and set its root directory to `apps/api`. The existing Dockerfile is detected automatically. If Railway asks for commands, use:
+Create a Railway service from the repository and set its root directory to `apps/api`. The checked-in [`railway.json`](../apps/api/railway.json) selects the Dockerfile, runs the Alembic migration before deploy, and configures the health check and restart policy.
+
+If Railway asks for commands, use:
 
 ```text
 Build:  uv sync --frozen --no-dev
@@ -54,7 +56,7 @@ https://<railway-domain>/api/health/ready
 
 ## Vercel web app
 
-Create a Vercel project from the same repository and set **Root Directory** to `apps/web`. Use the detected Next.js framework and keep the workspace install command as `pnpm install --frozen-lockfile`.
+Create a Vercel project from the same repository and set **Root Directory** to `apps/web`. The checked-in [`vercel.json`](../apps/web/vercel.json) selects Next.js and uses the frozen pnpm lockfile during install.
 
 Set these Vercel variables for Preview and Production as appropriate:
 

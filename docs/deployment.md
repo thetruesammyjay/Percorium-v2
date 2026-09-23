@@ -15,7 +15,7 @@ If Railway asks for commands, use:
 
 ```text
 Build:  uv sync --frozen --no-dev
-Start: /app/.venv/bin/uvicorn app.main:app --host 0.0.0.0 --port $PORT
+Start: /bin/sh -c 'exec /app/.venv/bin/uvicorn app.main:app --host 0.0.0.0 --port "${PORT:-8000}"'
 Healthcheck: /api/health/live
 ```
 

@@ -15,14 +15,14 @@ If Railway asks for commands, use:
 
 ```text
 Build:  uv sync --frozen --no-dev
-Start: uv run --no-dev uvicorn app.main:app --host 0.0.0.0 --port $PORT
+Start: /app/.venv/bin/uvicorn app.main:app --host 0.0.0.0 --port $PORT
 Healthcheck: /api/health/live
 ```
 
 Run the database migration as the Railway pre-deploy command:
 
 ```text
-uv run --no-dev alembic upgrade head
+/app/.venv/bin/alembic upgrade head
 ```
 
 Set these Railway variables in the **production** environment:

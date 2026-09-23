@@ -7,7 +7,9 @@ Percorium deploys as two services:
 
 ## Railway API
 
-Create a Railway service from the repository and set its root directory to `apps/api`. The checked-in [`railway.json`](../apps/api/railway.json) selects the Dockerfile, runs the Alembic migration before deploy, and configures the health check and restart policy.
+Create a Railway service from the repository and set its root directory to `/apps/api`. Set Railway's **Config File** field to `/apps/api/railway.json`; the root directory and config-file path are separate settings for monorepos. The checked-in [`railway.json`](../apps/api/railway.json) selects the Dockerfile, runs the Alembic migration before deploy, and configures the health check and restart policy.
+
+If your Railway project does not show a Config File field, enter the same Build and Deploy values from the file manually in the service settings.
 
 If Railway asks for commands, use:
 
@@ -27,7 +29,7 @@ Set these Railway variables in the **production** environment:
 
 ```text
 APP_ENV=production
-DATABASE_URL=<Neon pooled or direct PostgreSQL URL>
+DATABASE_URL=postgresql+asyncpg://<Neon user>:<password>@<Neon host>/<database>?ssl=require
 DB_AUTO_CREATE=false
 AUTH_REQUIRED=true
 CORS_ORIGINS=https://your-real-domain.com,https://www.your-real-domain.com
